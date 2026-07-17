@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>level941 — public board</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #0b0d10;
+    --panel: #14171c;
+    --panel-2: #1b1f26;
+    --border: #262b33;
+    --text: #e7e9ec;
+    --muted: #8b929c;
+    --accent: #6ee7b7;
+    --accent-2: #60a5fa;
+    --danger: #f87171;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --panel-2: #f0f2f5;
+      --border: #dde1e6;
+      --text: #14171c;
+      --muted: #5b6270;
+      --accent: #0f9d67;
+      --accent-2: #2563eb;
+      --danger: #dc2626;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0d10; --panel: #14171c; --panel-2: #1b1f26; --border: #262b33;
+    --text: #e7e9ec; --muted: #8b929c; --accent: #6ee7b7; --accent-2: #60a5fa; --danger: #f87171;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f0f2f5; --border: #dde1e6;
+    --text: #14171c; --muted: #5b6270; --accent: #0f9d67; --accent-2: #2563eb; --danger: #dc2626;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    line-height: 1.5;
+    padding: 24px 16px 64px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+
+  header h1 {
+    font-size: 1.3rem;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  header .sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 18px;
+  }
+
+  .caption {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+  }
+
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .tile {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .tile .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tile .value { font-size: 1.1rem; margin-top: 4px; word-break: break-word; }
+
+  section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  section h2 {
+    font-size: 0.95rem;
+    margin: 0 0 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .lookup-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  input[type="text"] {
+    flex: 1 1 260px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+    min-width: 0;
+  }
+  button {
+    background: var(--accent-2);
+    color: #0b0d10;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.secondary {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  #lookupResult { margin-top: 14px; }
+  .result-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 10px 0 12px;
+  }
+  .result-grid .k { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; }
+  .result-grid .v { font-size: 1.05rem; }
+  .not-found { color: var(--danger); }
+
+  .chart-wrap { overflow-x: auto; }
+  canvas { display: block; max-width: 100%; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  thead th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: var(--panel-2); }
+  .table-scroll { overflow-x: auto; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  footer {
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-align: center;
+    margin-top: 28px;
+  }
+  .error {
+    color: var(--danger);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>level941 — public board</h1>
+    <p class="sub">recomputable from the daily snapshot. no server, no database, no smart contract.</p>
+  </header>
+
+  <div class="caption">multipliers split the pie, they never grow it. daily bread is fixed by the curve. weights decide the slices.</div>
+
+  <div id="loadError" class="error" style="display:none;"></div>
+
+  <div class="totals" id="totals"></div>
+
+  <section>
+    <h2>look up a wallet</h2>
+    <div class="lookup-row">
+      <input type="text" id="walletInput" placeholder="paste a full wallet address" autocomplete="off" spellcheck="false" />
+      <button id="lookupBtn">look up</button>
+    </div>
+    <div id="lookupResult"></div>
+  </section>
+
+  <section>
+    <h2>the squared law — multiplier trajectory (1x → 8836x)</h2>
+    <p class="sub" style="margin-top:-6px;">reference curve for the announced law: streak^2, capped at 94. your marked point uses your real streak.</p>
+    <div class="chart-wrap">
+      <canvas id="trajectory" width="820" height="320"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2>full board</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>rank</th>
+            <th>wallet</th>
+            <th class="num">streak</th>
+            <th class="num">multiplier</th>
+            <th class="num">share</th>
+            <th class="num">yesterday</th>
+          </tr>
+        </thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer id="footerNote">generated —</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var CHART_CAP = 94;
+  var CHART_EXPONENT = 2;
+  var CHART_MAX = Math.pow(CHART_CAP, CHART_EXPONENT); // 8836
+
+  var boardData = null;
+
+  function truncateWallet(w) {
+    if (!w || w.length < 9) return w || '';
+    return w.slice(0, 4) + '...' + w.slice(-4);
+  }
+
+  function fmtNum(n) {
+    return Number(n).toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function renderTotals(data) {
+    var totals = data.totals || {};
+    var items = [
+      ['holders', totals.holderCount != null ? fmtNum(totals.holderCount) : '—'],
+      ['all-time distributed', totals.allTimeDistributedTokens != null ? fmtNum(totals.allTimeDistributedTokens) : '—'],
+      ['max streak', totals.maxStreak != null ? (fmtNum(totals.maxStreak) + 'd') : '—'],
+      ['next 9:41', totals.next941 ? new Date(totals.next941).toLocaleString() : '—'],
+      ['ruleset', data.rulesetId || '—'],
+      ['exponent', 'x' + (data.streakExponent != null ? data.streakExponent : '—') + ' (cap ' + (data.streakCap != null ? data.streakCap : '—') + ')'],
+    ];
+    var wrap = document.getElementById('totals');
+    wrap.innerHTML = '';
+    items.forEach(function (pair) {
+      var tile = el('div', 'tile');
+      tile.appendChild(el('div', 'label', pair[0]));
+      tile.appendChild(el('div', 'value', pair[1]));
+      wrap.appendChild(tile);
+    });
+  }
+
+  function renderTable(data) {
+    var body = document.getElementById('boardBody');
+    body.innerHTML = '';
+    (data.entries || []).forEach(function (row) {
+      var tr = document.createElement('tr');
+      tr.appendChild(el('td', null, String(row.rank)));
+      tr.appendChild(el('td', null, row.wallet));
+      tr.appendChild(el('td', 'num', String(row.streak)));
+      tr.appendChild(el('td', 'num', 'x' + fmtNum(row.multiplier)));
+      tr.appendChild(el('td', 'num', fmtNum(row.weightSharePercent) + '%'));
+      tr.appendChild(el('td', 'num', fmtNum(row.yesterdayBreadTokens)));
+      body.appendChild(tr);
+    });
+  }
+
+  function drawTrajectory(markStreak) {
+    var canvas = document.getElementById('trajectory');
+    var ctx = canvas.getContext('2d');
+    var w = canvas.width, h = canvas.height;
+    var padL = 56, padR = 20, padT = 16, padB = 36;
+    var plotW = w - padL - padR, plotH = h - padT - padB;
+
+    var isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    var root = document.documentElement.getAttribute('data-theme');
+    if (root === 'dark') isDark = true;
+    if (root === 'light') isDark = false;
+    var textColor = isDark ? '#8b929c' : '#5b6270';
+    var lineColor = isDark ? '#6ee7b7' : '#0f9d67';
+    var gridColor = isDark ? '#262b33' : '#dde1e6';
+    var markColor = isDark ? '#60a5fa' : '#2563eb';
+
+    ctx.clearRect(0, 0, w, h);
+
+    // log scale on y: 1 .. CHART_MAX
+    function yFor(mult) {
+      var lo = Math.log(1), hi = Math.log(CHART_MAX);
+      var t = (Math.log(Math.max(1, mult)) - lo) / (hi - lo);
+      return padT + plotH - t * plotH;
+    }
+    function xFor(streak) {
+      var t = (streak - 1) / (CHART_CAP - 1);
+      return padL + t * plotW;
+    }
+
+    // grid + axis labels (y: 1, 10, 100, 1000, 8836)
+    ctx.strokeStyle = gridColor;
+    ctx.fillStyle = textColor;
+    ctx.font = '11px ui-monospace, monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    [1, 10, 100, 1000, CHART_MAX].forEach(function (v) {
+      var y = yFor(v);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(w - padR, y);
+      ctx.stroke();
+      ctx.fillText('x' + v, padL - 8, y);
+    });
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    [1, 25, 50, 75, 94].forEach(function (s) {
+      var x = xFor(s);
+      ctx.fillText(String(s), x, h - padB + 8);
+    });
+    ctx.fillText('streak (days)', padL + plotW / 2, h - 14);
+
+    // curve
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (var s = 1; s <= CHART_CAP; s++) {
+      var x = xFor(s);
+      var y = yFor(Math.pow(s, CHART_EXPONENT));
+      if (s === 1) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // mark
+    if (markStreak && markStreak > 0) {
+      var ms = Math.min(Math.max(markStreak, 1), CHART_CAP);
+      var mx = xFor(ms), my = yFor(Math.pow(ms, CHART_EXPONENT));
+      ctx.fillStyle = markColor;
+      ctx.beginPath();
+      ctx.arc(mx, my, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = markColor;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(mx, padT);
+      ctx.lineTo(mx, my);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function findByWalletInput(data, raw) {
+    var v = (raw || '').trim();
+    if (!v) return null;
+    var target = v.length >= 9 ? truncateWallet(v) : v;
+    var matches = (data.entries || []).filter(function (e) { return e.wallet === target; });
+    return matches;
+  }
+
+  function renderLookup(data, matches, queryRaw) {
+    var out = document.getElementById('lookupResult');
+    out.innerHTML = '';
+    if (!matches || matches.length === 0) {
+      var p = el('div', 'not-found', 'no wallet on today’s board matches that address.');
+      out.appendChild(p);
+      return;
+    }
+    matches.forEach(function (row) {
+      var card = el('div', 'result-card');
+      var grid = el('div', 'result-grid');
+      var fields = [
+        ['rank', '#' + row.rank],
+        ['streak', row.streak + 'd'],
+        ['multiplier', 'x' + fmtNum(row.multiplier)],
+        ['share', fmtNum(row.weightSharePercent) + '%'],
+        ['yesterday', fmtNum(row.yesterdayBreadTokens) + ' tokens'],
+      ];
+      fields.forEach(function (pair) {
+        var f = el('div');
+        f.appendChild(el('div', 'k', pair[0]));
+        f.appendChild(el('div', 'v', pair[1]));
+        grid.appendChild(f);
+      });
+      card.appendChild(grid);
+      var shareBtn = el('button', 'secondary', 'download share card');
+      shareBtn.addEventListener('click', function () { downloadShareCard(row); });
+      card.appendChild(shareBtn);
+      out.appendChild(card);
+      drawTrajectory(row.streak);
+    });
+  }
+
+  function downloadShareCard(row) {
+    var c = document.createElement('canvas');
+    c.width = 1000;
+    c.height = 680;
+    var ctx = c.getContext('2d');
+
+    var bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0b0d10');
+    bg.addColorStop(1, '#14171c');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.strokeStyle = '#262b33';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(24, 24, c.width - 48, c.height - 48);
+
+    ctx.fillStyle = '#6ee7b7';
+    ctx.font = 'bold 34px ui-monospace, monospace';
+    ctx.fillText('level941 — public board', 60, 90);
+
+    ctx.fillStyle = '#8b929c';
+    ctx.font = '18px ui-monospace, monospace';
+    ctx.fillText(row.wallet, 60, 128);
+
+    var lines = [
+      ['rank', '#' + row.rank],
+      ['streak', row.streak + ' days'],
+      ['multiplier', 'x' + row.multiplier],
+      ['share of today’s pie', row.weightSharePercent + '%'],
+      ['yesterday’s bread', row.yesterdayBreadTokens + ' tokens'],
+    ];
+    var y = 200;
+    lines.forEach(function (pair) {
+      ctx.fillStyle = '#8b929c';
+      ctx.font = '16px ui-monospace, monospace';
+      ctx.fillText(pair[0].toUpperCase(), 60, y);
+      ctx.fillStyle = '#e7e9ec';
+      ctx.font = 'bold 40px ui-monospace, monospace';
+      ctx.fillText(pair[1], 60, y + 42);
+      y += 78;
+    });
+
+    ctx.fillStyle = '#5b6270';
+    ctx.font = '14px ui-monospace, monospace';
+    ctx.fillText('multipliers split the pie, they never grow it.', 60, c.height - 50);
+    ctx.fillText('daily bread is fixed by the curve. weights decide the slices.', 60, c.height - 30);
+
+    c.toBlob(function (blob) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'level941-board-' + row.wallet.replace(/\.\.\./g, '-') + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    }, 'image/png');
+  }
+
+  function init(data) {
+    boardData = data;
+    renderTotals(data);
+    renderTable(data);
+    drawTrajectory(0);
+    document.getElementById('footerNote').textContent =
+      'generated ' + (data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—') +
+      ' for ' + (data.date || '—') + '. recompute it yourself from the public snapshot.';
+
+    document.getElementById('lookupBtn').addEventListener('click', function () {
+      var raw = document.getElementById('walletInput').value;
+      renderLookup(boardData, findByWalletInput(boardData, raw), raw);
+    });
+    document.getElementById('walletInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('lookupBtn').click();
+    });
+  }
+
+  fetch('board.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(init)
+    .catch(function (e) {
+      var err = document.getElementById('loadError');
+      err.style.display = 'block';
+      err.textContent =
+        'Could not load board.json (' + e.message + '). Run "npm run publish-board" and serve this ' +
+        'directory over http (e.g. "npx serve docs"), not file://.';
+      drawTrajectory(0);
+    });
+})();
+</script>
+</body>
+</html>

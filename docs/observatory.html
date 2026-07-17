@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>level941 — observatory</title>
+<style>
+  /* Deliberately dark-only. This is an instrument panel, not a document —
+     forcing a light mode would undercut the whole idea. Six named colors,
+     the accent reserved for live events only. */
+  :root {
+    --bg: #15120f;
+    --panel: #1e1a16;
+    --border: #332c25;
+    --text: #ece6db;
+    --muted: #93897a;
+    --accent: #dfa25a;
+
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    background-image: radial-gradient(ellipse at 50% -10%, rgba(223, 162, 90, 0.05), transparent 60%);
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.5;
+    padding: 28px 16px 72px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  header { margin-bottom: 22px; }
+  header h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 2rem;
+    letter-spacing: 0.01em;
+    margin: 0 0 6px;
+    color: var(--text);
+  }
+  header .sub {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  header .sub a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  header .sub a:hover { color: var(--accent); }
+
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+  .pulse-dot.live {
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(223, 162, 90, 0.6);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse-dot.live { animation: pulseOnce 1.6s ease-out; }
+  }
+  @keyframes pulseOnce {
+    0%   { box-shadow: 0 0 0 0 rgba(223, 162, 90, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(223, 162, 90, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(223, 162, 90, 0); }
+  }
+
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 22px 0;
+  }
+  .tile {
+    background: var(--panel);
+    padding: 14px 16px;
+  }
+  .tile .label {
+    color: var(--muted);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-ui);
+  }
+  .tile .value {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    margin-top: 5px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  section h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.15rem;
+    margin: 0 0 4px;
+    color: var(--text);
+  }
+  section .section-sub {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 0 0 14px;
+  }
+
+  /* ---- heartbeat feed ---- */
+  .feed { display: flex; flex-direction: column; }
+  .feed-row {
+    display: grid;
+    grid-template-columns: 88px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 9px 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.86rem;
+  }
+  .feed-row:last-child { border-bottom: none; }
+  .feed-row .t {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-size: 0.76rem;
+    white-space: nowrap;
+  }
+  .feed-row .label {
+    font-family: var(--font-mono);
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  .feed-row .kind {
+    color: var(--muted);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 8px;
+  }
+  .feed-row .solscan {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .feed-row .solscan:hover { text-decoration: underline; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .feed-row.entering {
+      animation: rowIn 0.55s ease-out;
+    }
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(-6px); background: rgba(223, 162, 90, 0.10); }
+    to   { opacity: 1; transform: translateY(0); background: transparent; }
+  }
+
+  .empty-state {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 18px 4px;
+    text-align: center;
+  }
+
+  /* ---- box contents (placeholder list; the vessel view is Layer 3) ---- */
+  .box-list { display: flex; flex-direction: column; gap: 0; }
+  .box-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.84rem;
+  }
+  .box-row:last-child { border-bottom: none; }
+  .box-row .mint {
+    font-family: var(--font-mono);
+    color: var(--text);
+  }
+  .box-row .amount {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-align: right;
+  }
+  .box-row .status {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .box-row .status.is-ready, .box-row .status.is-fastlane { color: var(--accent); }
+  .box-row .status.is-blocked { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--border); }
+
+  .layer-note {
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-style: italic;
+    margin-top: 12px;
+  }
+
+  .error-banner {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  footer {
+    color: var(--muted);
+    font-size: 0.76rem;
+    text-align: center;
+    margin-top: 28px;
+    font-family: var(--font-mono);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>level941 — observatory</h1>
+    <p class="sub">the live engine, watchable. a separate surface from <a href="index.html">the public board</a>.</p>
+    <div class="status-line">
+      <span class="pulse-dot" id="pulseDot"></span>
+      <span id="statusText">connecting…</span>
+    </div>
+  </header>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="totals" id="totals"></div>
+
+  <section>
+    <h2>the heartbeat</h2>
+    <p class="section-sub">every confirmed send, as it lands. tap any line to verify it on Solscan yourself.</p>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <section>
+    <h2>in the box</h2>
+    <p class="section-sub">foreign tokens sent to the drop wallet, cooling before they're evaluated for sweep.</p>
+    <div class="box-list" id="boxList"></div>
+    <p class="layer-note">plain list for now — the full vessel view is Layer 3.</p>
+  </section>
+
+  <footer id="footerNote">—</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var POLL_MS = 10000;
+  var seenKeys = new Set();
+  var firstLoad = true;
+
+  function fmtNum(n, maxFrac) {
+    return Number(n).toLocaleString(undefined, { maximumFractionDigits: maxFrac == null ? 4 : maxFrac });
+  }
+
+  function timeAgo(iso) {
+    var then = new Date(iso).getTime();
+    var diff = Math.max(0, Date.now() - then);
+    var s = Math.floor(diff / 1000);
+    if (s < 5) return 'just now';
+    if (s < 60) return s + 's ago';
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + 'm ago';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + 'h ago';
+    var d = Math.floor(h / 24);
+    return d + 'd ago';
+  }
+
+  function fmtDuration(seconds) {
+    if (seconds == null) return '—';
+    if (seconds <= 0) return 'clear now';
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return h + 'h ' + m + 'm';
+    return m + 'm';
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function renderTotals(data) {
+    var wrap = document.getElementById('totals');
+    var items = [
+      ['holders', fmtNum(data.holderCount, 0)],
+      ['sol balance', fmtNum(data.solBalance, 4)],
+      ['pigeon balance', fmtNum(data.pigeonBalanceTokens, 2)],
+      ['all-time distributed', fmtNum(data.allTimeDistributedTokens, 2)],
+      ['curve headroom today', fmtNum(data.curveHeadroomTokens, 2)],
+      ['next 9:41', new Date(data.next941).toLocaleString()],
+    ];
+    wrap.innerHTML = '';
+    items.forEach(function (pair) {
+      var tile = el('div', 'tile');
+      tile.appendChild(el('div', 'label', pair[0]));
+      tile.appendChild(el('div', 'value', pair[1]));
+      wrap.appendChild(tile);
+    });
+  }
+
+  function eventKey(e) {
+    return e.solscanUrl + '|' + e.ts;
+  }
+
+  function renderFeed(data) {
+    var feed = document.getElementById('feed');
+    var events = data.recentEvents || [];
+    if (events.length === 0) {
+      feed.innerHTML = '';
+      feed.appendChild(el('div', 'empty-state', 'quiet right now. the curve waits on growth, or the next 9:41.'));
+      return;
+    }
+
+    var hadRows = feed.querySelector('.feed-row') !== null;
+    feed.innerHTML = '';
+    var newlySeen = 0;
+    events.forEach(function (e) {
+      var key = eventKey(e);
+      var isNew = !firstLoad && !seenKeys.has(key);
+      if (isNew) newlySeen++;
+      seenKeys.add(key);
+
+      var row = el('div', 'feed-row' + (isNew ? ' entering' : ''));
+      row.appendChild(el('div', 't', timeAgo(e.ts)));
+
+      var labelWrap = el('div', 'label');
+      var kindTag = el('span', 'kind', e.kind);
+      labelWrap.appendChild(kindTag);
+      labelWrap.appendChild(document.createTextNode(e.label));
+      row.appendChild(labelWrap);
+
+      var link = document.createElement('a');
+      link.className = 'solscan';
+      link.href = e.solscanUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'solscan ↗';
+      row.appendChild(link);
+
+      feed.appendChild(row);
+    });
+
+    if (hadRows && newlySeen > 0) flashPulse();
+  }
+
+  function statusClass(status) {
+    if (status === 'ready' || status === 'fastlane') return 'is-ready';
+    if (status === 'quarantined' || status === 'denied') return 'is-blocked';
+    return '';
+  }
+
+  function statusLabel(t) {
+    switch (t.status) {
+      case 'ready': return 'ready to sweep';
+      case 'fastlane': return 'fastlane';
+      case 'cooling': return 'cooling ' + fmtDuration(t.coolingSecondsRemaining);
+      case 'pending-value': return 'pending value';
+      case 'quarantined': return 'quarantined';
+      case 'denied': return 'denied';
+      case 'pending-screen': return 'awaiting screen';
+      default: return t.status;
+    }
+  }
+
+  function renderBox(data) {
+    var wrap = document.getElementById('boxList');
+    var tokens = data.foreignTokens || [];
+    wrap.innerHTML = '';
+    if (tokens.length === 0) {
+      wrap.appendChild(el('div', 'empty-state', 'nothing foreign in the box right now.'));
+      return;
+    }
+    tokens.forEach(function (t) {
+      var row = el('div', 'box-row');
+      var link = document.createElement('a');
+      link.className = 'mint';
+      link.href = t.solscanUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = t.mint.slice(0, 4) + '...' + t.mint.slice(-4);
+      link.title = t.reason || '';
+      row.appendChild(link);
+      row.appendChild(el('div', 'amount', fmtNum(t.amountTokens, 2)));
+      var st = el('div', 'status ' + statusClass(t.status), statusLabel(t));
+      st.title = t.reason || '';
+      row.appendChild(st);
+      wrap.appendChild(row);
+    });
+  }
+
+  function flashPulse() {
+    var dot = document.getElementById('pulseDot');
+    dot.classList.remove('live');
+    void dot.offsetWidth; // restart animation
+    dot.classList.add('live');
+  }
+
+  function render(data) {
+    renderTotals(data);
+    renderFeed(data);
+    renderBox(data);
+    document.getElementById('statusText').textContent =
+      'live · last update ' + timeAgo(data.generatedAt) + ' · ruleset ' + (data.rulesetId || '—');
+    document.getElementById('footerNote').textContent =
+      'polling live-state.json every ' + Math.round(POLL_MS / 1000) + 's. recomputable, verifiable, nothing hidden.';
+    firstLoad = false;
+  }
+
+  function showError(message) {
+    var banner = document.getElementById('errorBanner');
+    banner.style.display = 'block';
+    banner.textContent = message;
+    document.getElementById('statusText').textContent = 'not connected';
+  }
+
+  function poll() {
+    fetch('live-state.json', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        document.getElementById('errorBanner').style.display = 'none';
+        render(data);
+      })
+      .catch(function (e) {
+        showError(
+          'Could not load live-state.json (' + e.message + '). Run "npm run dashboard-poll-once" (or ' +
+          '"npm run dashboard-poll" to keep it live), and serve this directory over http, not file://.'
+        );
+      });
+  }
+
+  poll();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "name": "level941-daily-airdrop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Daily adaptive SPL token airdrop. Local script. Manual control.",
+  "type": "module",
+  "scripts": {
+    "snapshot": "tsx src/index.ts snapshot",
+    "preview": "tsx src/index.ts preview",
+    "test-send": "tsx src/index.ts test-send",
+    "send-daily": "tsx src/index.ts send-daily",
+    "send-auto": "tsx src/index.ts send-auto",
+    "og-replay": "tsx src/og-replay.ts",
+    "og-holders": "tsx src/og-holders.ts",
+    "sweep": "tsx src/index.ts sweep",
+    "sweep-status": "tsx src/index.ts sweep-status",
+    "sweep-deny": "tsx src/index.ts sweep-deny",
+    "announce-today": "tsx src/index.ts announce-today",
+    "bridge-status": "tsx src/index.ts bridge-status",
+    "draw-commit": "tsx src/index.ts draw-commit",
+    "draw-settle": "tsx src/index.ts draw-settle",
+    "draw-status": "tsx src/index.ts draw-status",
+    "test": "tsx test/run.ts",
+    "loyalty-preview": "tsx src/index.ts loyalty-preview",
+    "loyalty-pay": "tsx src/index.ts loyalty-pay",
+    "founder-preview": "tsx src/index.ts founder-preview",
+    "founder-pay": "tsx src/index.ts founder-pay",
+    "og-founder-preview": "tsx src/index.ts og-founder-preview",
+    "og-founder-pay": "tsx src/index.ts og-founder-pay",
+    "publish-board": "tsx src/index.ts publish-board",
+    "dashboard-poll": "tsx src/poller.ts",
+    "dashboard-poll-once": "tsx src/poller.ts once"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.98.0",
+    "bs58": "^6.0.0",
+    "csv-parse": "^5.6.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
