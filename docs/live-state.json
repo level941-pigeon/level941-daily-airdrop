@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T21:46:16.893Z",
+  "generatedAt": "2026-07-17T21:47:33.511Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -361,6 +361,15 @@
       "solscanUrl": "https://solscan.io/token/4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump"
     },
     {
+      "mint": "9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1",
+      "amountTokens": "166042.337933",
+      "valueUsd": null,
+      "status": "pending-screen",
+      "reason": "arrived since the last pipeline run, not yet screened",
+      "coolingSecondsRemaining": null,
+      "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
+    },
+    {
       "mint": "J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump",
       "amountTokens": "65405.803846",
       "valueUsd": null,
@@ -384,7 +393,7 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 41h remaining",
-      "coolingSecondsRemaining": 145203,
+      "coolingSecondsRemaining": 145126,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
     },
     {
