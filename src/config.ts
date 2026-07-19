@@ -200,7 +200,7 @@ export function loadConfig(): AppConfig {
     loyaltyBonusTokens: parseIntEnv('LOYALTY_BONUS_TOKENS', 25000, 1),
     founderDropTokens: parseIntEnv('FOUNDER_DROP_TOKENS', 25000, 1),
     drawMode: optional('DRAW_MODE', 'holders') === 'entries' ? 'entries' : 'holders',
-    sweepMinUsd: parseIntEnv('SWEEP_MIN_USD', 100, 0),
+    sweepMinUsd: parseIntEnv('SWEEP_MIN_USD', 1, 0),
     sweepDelayHours: parseIntEnv('SWEEP_DELAY_HOURS', 48, 0),
     solReserve: Number.parseFloat(optional('SOL_RESERVE', '0.3')),
     jupQuoteUrl: optional('JUP_QUOTE_URL', 'https://lite-api.jup.ag/swap/v1/quote'),

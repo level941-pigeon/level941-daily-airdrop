@@ -17,6 +17,9 @@ export interface BoardEntry {
   streak: number;
   multiplier: number; // min(streak,cap)^exponent at the LIVE STREAK_EXPONENT
   weightSharePercent: number; // this wallet's share of today's weighted pool
+  balanceTokens: string; // human balance. weight = balanceTokens * multiplier, exactly -- this
+  // is what makes the "tokens needed to pass rank N" math on the board
+  // exact and independently recomputable, not a guess from share% alone.
   yesterdayBreadTokens: string; // human amount actually confirmed-sent yesterday, "0" if none
 }
 
@@ -115,6 +118,7 @@ export async function runPublishBoard(cfg: AppConfig): Promise<void> {
         streak: r.streak,
         multiplier: cappedStreak ** exponent,
         weightSharePercent: totalWeight > 0n ? Number((w * 1_000_000n) / totalWeight) / 10_000 : 0,
+        balanceTokens: rawToHuman(r.balanceRaw, d),
         yesterdayBreadTokens: rawToHuman(bread.get(r.wallet) ?? 0n, d),
       };
     })
@@ -130,6 +134,7 @@ export async function runPublishBoard(cfg: AppConfig): Promise<void> {
     streak: r.streak,
     multiplier: r.multiplier,
     weightSharePercent: r.weightSharePercent,
+    balanceTokens: r.balanceTokens,
     yesterdayBreadTokens: r.yesterdayBreadTokens,
   }));
 
