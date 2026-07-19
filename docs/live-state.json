@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-19T18:22:05.709Z",
+  "generatedAt": "2026-07-19T18:23:22.022Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -366,7 +366,7 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 20h remaining",
-      "coolingSecondsRemaining": 69948,
+      "coolingSecondsRemaining": 69872,
       "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
     },
     {
