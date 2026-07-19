@@ -4,39 +4,32 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>level941 — public board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
+  /* "a pigeon built this." Dark pigeon-feather slate, one living accent:
+     the oil-slick iridescence on a pigeon's neck. Committed to dark-only --
+     this page now shares one identity with the observatory. */
   :root {
-    color-scheme: light dark;
-    --bg: #0b0d10;
-    --panel: #14171c;
-    --panel-2: #1b1f26;
-    --border: #262b33;
-    --text: #e7e9ec;
-    --muted: #8b929c;
-    --accent: #6ee7b7;
-    --accent-2: #60a5fa;
-    --danger: #f87171;
-  }
-  @media (prefers-color-scheme: light) {
-    :root {
-      --bg: #f6f7f9;
-      --panel: #ffffff;
-      --panel-2: #f0f2f5;
-      --border: #dde1e6;
-      --text: #14171c;
-      --muted: #5b6270;
-      --accent: #0f9d67;
-      --accent-2: #2563eb;
-      --danger: #dc2626;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0b0d10; --panel: #14171c; --panel-2: #1b1f26; --border: #262b33;
-    --text: #e7e9ec; --muted: #8b929c; --accent: #6ee7b7; --accent-2: #60a5fa; --danger: #f87171;
-  }
-  :root[data-theme="light"] {
-    --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f0f2f5; --border: #dde1e6;
-    --text: #14171c; --muted: #5b6270; --accent: #0f9d67; --accent-2: #2563eb; --danger: #dc2626;
+    --bg: #16181b;
+    --panel: #1e2124;
+    --panel-2: #262a2e;
+    --border: #34393e;
+    --text: #e7e9ea;
+    --muted: #8b9096;
+
+    --iri-1: #00d9a3;
+    --iri-2: #7c5cff;
+    --iri-3: #ff5ec4;
+    --iri-4: #4dc9ff;
+    --iridescent: linear-gradient(115deg, var(--iri-1) 0%, var(--iri-2) 30%, var(--iri-3) 60%, var(--iri-4) 85%, var(--iri-1) 100%);
+    --accent: var(--iri-4);
+    --danger: var(--iri-3);
+
+    --font-display: "Fraunces", Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
@@ -44,21 +37,43 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-family: var(--font-mono);
     line-height: 1.5;
     padding: 24px 16px 64px;
   }
   .wrap { max-width: 920px; margin: 0 auto; }
 
-  header h1 {
-    font-size: 1.3rem;
-    margin: 0 0 4px;
-    letter-spacing: -0.01em;
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--iri-4);
+    outline-offset: 2px;
   }
-  header .sub {
+
+  /* ---- shared site header ---- */
+  .site-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-ui);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .pigeon-mark { width: 32px; height: 27px; flex-shrink: 0; }
+  .pigeon-mark .pg-body { fill: var(--text); }
+  .pigeon-mark .pg-neck { fill: var(--iri-2); }
+  .wordmark { font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; }
+  .site-nav { display: flex; gap: 16px; margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+  .site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  .site-nav a:hover { color: var(--text); }
+  .site-nav a.active { color: var(--text); border-bottom-color: var(--iri-4); }
+
+  .page-sub {
     color: var(--muted);
     font-size: 0.85rem;
     margin: 0 0 18px;
+    font-family: var(--font-ui);
   }
 
   .caption {
@@ -70,6 +85,44 @@
     font-size: 0.88rem;
     margin-bottom: 20px;
   }
+
+  /* ---- 9:41 countdown, the appointment ---- */
+  .countdown-block { margin-bottom: 20px; }
+  .countdown-label {
+    font-family: var(--font-ui);
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .countdown-frame {
+    display: inline-block;
+    position: relative;
+    padding: 14px 24px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+  }
+  .countdown-frame::before, .countdown-frame::after {
+    content: ""; position: absolute; width: 10px; height: 10px; border-color: var(--iri-3);
+  }
+  .countdown-frame::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+  .countdown-frame::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+  .countdown-digits {
+    font-weight: 600;
+    font-size: 2.1rem;
+    letter-spacing: 0.02em;
+    background: var(--iridescent);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .countdown-digits { animation: sheenSweep 8s linear infinite; }
+  }
+  @keyframes sheenSweep { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
 
   .totals {
     display: grid;
@@ -83,8 +136,18 @@
     border-radius: 10px;
     padding: 12px 14px;
   }
-  .tile .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .tile .value { font-size: 1.1rem; margin-top: 4px; word-break: break-word; }
+  .tile .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-ui); }
+  .tile .value { font-size: 1.1rem; margin-top: 4px; word-break: break-word; display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .tile .value.flash { animation: numberFlash 0.9s ease-out; }
+  }
+  @keyframes numberFlash {
+    0% {
+      background: var(--iridescent); background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    100% { background: none; -webkit-background-clip: initial; background-clip: initial; color: var(--text); }
+  }
 
   section {
     background: var(--panel);
@@ -94,12 +157,12 @@
     margin-bottom: 20px;
   }
   section h2 {
-    font-size: 0.95rem;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: 1.15rem;
     margin: 0 0 12px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
+    color: var(--text);
   }
 
   .lookup-row {
@@ -118,8 +181,8 @@
     min-width: 0;
   }
   button {
-    background: var(--accent-2);
-    color: #0b0d10;
+    background: var(--iri-4);
+    color: #16181b;
     border: none;
     border-radius: 8px;
     padding: 10px 16px;
@@ -147,59 +210,96 @@
     gap: 10px;
     margin: 10px 0 12px;
   }
-  .result-grid .k { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; }
+  .result-grid .k { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-family: var(--font-ui); }
   .result-grid .v { font-size: 1.05rem; }
-  .not-found { color: var(--danger); }
+  .not-found { color: var(--danger); font-family: var(--font-ui); }
 
   .chart-wrap { overflow-x: auto; }
   canvas { display: block; max-width: 100%; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
+  /* ---- living leaderboard (div grid, not <table>, so FLIP transforms are reliable) ---- */
+  .board-table { font-size: 0.85rem; }
+  .board-head, .board-row {
+    display: grid;
+    grid-template-columns: 46px 1fr 66px 90px 76px 100px;
+    gap: 8px;
+    padding: 8px 10px;
+    align-items: center;
   }
-  thead th {
-    text-align: left;
+  .board-head {
     color: var(--muted);
     font-weight: 600;
-    padding: 8px 10px;
+    font-family: var(--font-ui);
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
   }
-  tbody td {
-    padding: 7px 10px;
+  .board-rows { position: relative; }
+  .board-row {
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
+    box-shadow: inset 0 0 0 0 transparent;
+    background: transparent;
+    transition: box-shadow 1s ease, opacity 0.4s ease, background 1s ease;
   }
-  tbody tr:hover { background: var(--panel-2); }
+  .board-row.mover { box-shadow: inset 3px 0 0 0 var(--iri-3); background: rgba(255, 94, 196, 0.05); }
+  .board-row.dimmed { opacity: 0.4; }
+  .board-row.entering { animation: rowFadeIn 0.6s ease-out; }
+  @keyframes rowFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .board-row .num { text-align: right; font-variant-numeric: tabular-nums; }
   .table-scroll { overflow-x: auto; }
-  .num { text-align: right; font-variant-numeric: tabular-nums; }
 
   footer {
     color: var(--muted);
     font-size: 0.78rem;
     text-align: center;
     margin-top: 28px;
+    font-family: var(--font-ui);
   }
   .error {
     color: var(--danger);
     font-size: 0.85rem;
+    font-family: var(--font-ui);
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>level941 — public board</h1>
-    <p class="sub">recomputable from the daily snapshot. no server, no database, no smart contract.</p>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <svg class="pigeon-mark" viewBox="0 0 120 100" aria-hidden="true">
+        <path class="pg-body" d="M28,60 C28,40 50,28 72,32 C92,35 100,48 96,58 C90,72 66,78 46,74 C34,71 28,68 28,60 Z"/>
+        <path class="pg-neck" d="M74,34 C82,32 90,36 92,44 C93,50 88,54 82,52 C76,50 72,44 74,34 Z"/>
+        <circle class="pg-body" cx="90" cy="30" r="11"/>
+        <path class="pg-body" d="M99,28 L109,31 L99,34 Z"/>
+        <path class="pg-body" d="M12,55 L28,50 L29,60 L14,65 Z"/>
+      </svg>
+      <span class="wordmark">level941</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html" class="active">board</a>
+      <a href="observatory.html">observatory</a>
+    </nav>
   </header>
+
+  <p class="page-sub">recomputable from the daily snapshot. no server, no database, no smart contract.</p>
 
   <div class="caption">multipliers split the pie, they never grow it. daily bread is fixed by the curve. weights decide the slices.</div>
 
   <div id="loadError" class="error" style="display:none;"></div>
 
-  <div class="totals" id="totals"></div>
+  <div class="countdown-block">
+    <div class="countdown-label">next 9:41</div>
+    <div class="countdown-frame"><div class="countdown-digits" id="countdown">--:--:--</div></div>
+  </div>
+
+  <div class="totals">
+    <div class="tile"><div class="label">holders</div><div class="value" id="val-holders">—</div></div>
+    <div class="tile"><div class="label">all-time distributed</div><div class="value" id="val-distributed">—</div></div>
+    <div class="tile"><div class="label">max streak</div><div class="value" id="val-streak">—</div></div>
+    <div class="tile"><div class="label">ruleset</div><div class="value" id="val-ruleset">—</div></div>
+    <div class="tile"><div class="label">exponent</div><div class="value" id="val-exponent">—</div></div>
+  </div>
 
   <section>
     <h2>look up a wallet</h2>
@@ -212,7 +312,7 @@
 
   <section>
     <h2>the squared law — multiplier trajectory (1x → 8836x)</h2>
-    <p class="sub" style="margin-top:-6px;">reference curve for the announced law: streak^2, capped at 94. your marked point uses your real streak.</p>
+    <p class="page-sub" style="margin-top:-6px;">reference curve for the announced law: streak^2, capped at 94. your marked point uses your real streak.</p>
     <div class="chart-wrap">
       <canvas id="trajectory" width="820" height="320"></canvas>
     </div>
@@ -220,20 +320,14 @@
 
   <section>
     <h2>full board</h2>
+    <p class="page-sub" style="margin-top:-6px;">re-checks every 45s. a wallet moving up or down the ranking lights up as it moves. a wallet at 0% share has sold and sits dim.</p>
     <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>rank</th>
-            <th>wallet</th>
-            <th class="num">streak</th>
-            <th class="num">multiplier</th>
-            <th class="num">share</th>
-            <th class="num">yesterday</th>
-          </tr>
-        </thead>
-        <tbody id="boardBody"></tbody>
-      </table>
+      <div class="board-table">
+        <div class="board-head">
+          <div>rank</div><div>wallet</div><div class="num">streak</div><div class="num">multiplier</div><div class="num">share</div><div class="num">yesterday</div>
+        </div>
+        <div class="board-rows" id="boardBody"></div>
+      </div>
     </div>
   </section>
 
@@ -247,8 +341,13 @@
   var CHART_CAP = 94;
   var CHART_EXPONENT = 2;
   var CHART_MAX = Math.pow(CHART_CAP, CHART_EXPONENT); // 8836
+  var POLL_MS = 45000;
 
   var boardData = null;
+  var lastMarkStreak = 0;
+  var firstLoad = true;
+  var lastValues = {};
+  var lastRects = {}; // wallet -> DOMRect, captured just before each re-render
 
   function truncateWallet(w) {
     if (!w || w.length < 9) return w || '';
@@ -266,60 +365,107 @@
     return e;
   }
 
-  function renderTotals(data) {
-    var totals = data.totals || {};
-    var items = [
-      ['holders', totals.holderCount != null ? fmtNum(totals.holderCount) : '—'],
-      ['all-time distributed', totals.allTimeDistributedTokens != null ? fmtNum(totals.allTimeDistributedTokens) : '—'],
-      ['max streak', totals.maxStreak != null ? (fmtNum(totals.maxStreak) + 'd') : '—'],
-      ['next 9:41', totals.next941 ? new Date(totals.next941).toLocaleString() : '—'],
-      ['ruleset', data.rulesetId || '—'],
-      ['exponent', 'x' + (data.streakExponent != null ? data.streakExponent : '—') + ' (cap ' + (data.streakCap != null ? data.streakCap : '—') + ')'],
-    ];
-    var wrap = document.getElementById('totals');
-    wrap.innerHTML = '';
-    items.forEach(function (pair) {
-      var tile = el('div', 'tile');
-      tile.appendChild(el('div', 'label', pair[0]));
-      tile.appendChild(el('div', 'value', pair[1]));
-      wrap.appendChild(tile);
-    });
+  // ---- live 9:41 countdown, ticks every second off the client clock ----
+  function nextNineFortyOne() {
+    var now = new Date();
+    var next = new Date(now);
+    next.setHours(9, 41, 0, 0);
+    if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+    return next;
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tickCountdown() {
+    var diff = Math.max(0, nextNineFortyOne().getTime() - Date.now());
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var cd = document.getElementById('countdown');
+    if (cd) cd.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  function setValue(id, text) {
+    var elm = document.getElementById(id);
+    if (!elm) return;
+    var changed = lastValues.hasOwnProperty(id) && lastValues[id] !== text && !firstLoad;
+    lastValues[id] = text;
+    elm.textContent = text;
+    if (changed) {
+      elm.classList.remove('flash');
+      void elm.offsetWidth;
+      elm.classList.add('flash');
+    }
   }
 
+  function renderTotals(data) {
+    var totals = data.totals || {};
+    setValue('val-holders', totals.holderCount != null ? fmtNum(totals.holderCount) : '—');
+    setValue('val-distributed', totals.allTimeDistributedTokens != null ? fmtNum(totals.allTimeDistributedTokens) : '—');
+    setValue('val-streak', totals.maxStreak != null ? (fmtNum(totals.maxStreak) + 'd') : '—');
+    setValue('val-ruleset', data.rulesetId || '—');
+    setValue('val-exponent', 'x' + (data.streakExponent != null ? data.streakExponent : '—') + ' (cap ' + (data.streakCap != null ? data.streakCap : '—') + ')');
+  }
+
+  // Living leaderboard: rebuild rows, then FLIP-animate anything that moved
+  // and glow it briefly. Zero-share wallets (sold, sitting in timeout) sit
+  // dimmed. Wallets seen for the first time fade in instead of jumping in.
   function renderTable(data) {
-    var body = document.getElementById('boardBody');
-    body.innerHTML = '';
+    var container = document.getElementById('boardBody');
+    var existingRows = Array.from(container.children);
+    var oldRects = {};
+    existingRows.forEach(function (r) { oldRects[r.dataset.wallet] = r.getBoundingClientRect(); });
+
+    container.innerHTML = '';
     (data.entries || []).forEach(function (row) {
-      var tr = document.createElement('tr');
-      tr.appendChild(el('td', null, String(row.rank)));
-      tr.appendChild(el('td', null, row.wallet));
-      tr.appendChild(el('td', 'num', String(row.streak)));
-      tr.appendChild(el('td', 'num', 'x' + fmtNum(row.multiplier)));
-      tr.appendChild(el('td', 'num', fmtNum(row.weightSharePercent) + '%'));
-      tr.appendChild(el('td', 'num', fmtNum(row.yesterdayBreadTokens)));
-      body.appendChild(tr);
+      var tr = el('div', 'board-row');
+      tr.dataset.wallet = row.wallet;
+      tr.appendChild(el('div', null, String(row.rank)));
+      tr.appendChild(el('div', null, row.wallet));
+      tr.appendChild(el('div', 'num', String(row.streak)));
+      tr.appendChild(el('div', 'num', 'x' + fmtNum(row.multiplier)));
+      tr.appendChild(el('div', 'num', fmtNum(row.weightSharePercent) + '%'));
+      tr.appendChild(el('div', 'num', fmtNum(row.yesterdayBreadTokens)));
+      if (row.weightSharePercent === 0) tr.classList.add('dimmed');
+      if (!firstLoad && !oldRects.hasOwnProperty(row.wallet)) tr.classList.add('entering');
+      container.appendChild(tr);
+    });
+
+    if (firstLoad) return;
+
+    Array.from(container.children).forEach(function (r) {
+      var old = oldRects[r.dataset.wallet];
+      if (!old) return;
+      var now = r.getBoundingClientRect();
+      var dy = old.top - now.top;
+      if (Math.abs(dy) > 1) {
+        r.style.transform = 'translateY(' + dy + 'px)';
+        r.style.transition = 'none';
+        r.classList.add('mover');
+        requestAnimationFrame(function () {
+          r.style.transition = 'transform 0.5s ease';
+          r.style.transform = '';
+        });
+        setTimeout(function () { r.classList.remove('mover'); }, 1500);
+      }
     });
   }
 
   function drawTrajectory(markStreak) {
+    lastMarkStreak = markStreak;
     var canvas = document.getElementById('trajectory');
     var ctx = canvas.getContext('2d');
     var w = canvas.width, h = canvas.height;
     var padL = 56, padR = 20, padT = 16, padB = 36;
     var plotW = w - padL - padR, plotH = h - padT - padB;
 
-    var isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-    var root = document.documentElement.getAttribute('data-theme');
-    if (root === 'dark') isDark = true;
-    if (root === 'light') isDark = false;
-    var textColor = isDark ? '#8b929c' : '#5b6270';
-    var lineColor = isDark ? '#6ee7b7' : '#0f9d67';
-    var gridColor = isDark ? '#262b33' : '#dde1e6';
-    var markColor = isDark ? '#60a5fa' : '#2563eb';
+    var textColor = '#8b9096';
+    var lineColor = '#00d9a3';
+    var gridColor = '#34393e';
+    var markColor = '#ff5ec4';
 
     ctx.clearRect(0, 0, w, h);
 
-    // log scale on y: 1 .. CHART_MAX
     function yFor(mult) {
       var lo = Math.log(1), hi = Math.log(CHART_MAX);
       var t = (Math.log(Math.max(1, mult)) - lo) / (hi - lo);
@@ -330,10 +476,9 @@
       return padL + t * plotW;
     }
 
-    // grid + axis labels (y: 1, 10, 100, 1000, 8836)
     ctx.strokeStyle = gridColor;
     ctx.fillStyle = textColor;
-    ctx.font = '11px ui-monospace, monospace';
+    ctx.font = '11px "JetBrains Mono", ui-monospace, monospace';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     [1, 10, 100, 1000, CHART_MAX].forEach(function (v) {
@@ -353,7 +498,6 @@
     });
     ctx.fillText('streak (days)', padL + plotW / 2, h - 14);
 
-    // curve
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -364,7 +508,6 @@
     }
     ctx.stroke();
 
-    // mark
     if (markStreak && markStreak > 0) {
       var ms = Math.min(Math.max(markStreak, 1), CHART_CAP);
       var mx = xFor(ms), my = yFor(Math.pow(ms, CHART_EXPONENT));
@@ -416,7 +559,13 @@
       });
       card.appendChild(grid);
       var shareBtn = el('button', 'secondary', 'download share card');
-      shareBtn.addEventListener('click', function () { downloadShareCard(row); });
+      shareBtn.addEventListener('click', function () {
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { downloadShareCard(row); });
+        } else {
+          downloadShareCard(row);
+        }
+      });
       card.appendChild(shareBtn);
       out.appendChild(card);
       drawTrajectory(row.streak);
@@ -430,21 +579,21 @@
     var ctx = c.getContext('2d');
 
     var bg = ctx.createLinearGradient(0, 0, 0, c.height);
-    bg.addColorStop(0, '#0b0d10');
-    bg.addColorStop(1, '#14171c');
+    bg.addColorStop(0, '#16181b');
+    bg.addColorStop(1, '#1e2124');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, c.width, c.height);
 
-    ctx.strokeStyle = '#262b33';
+    ctx.strokeStyle = '#34393e';
     ctx.lineWidth = 2;
     ctx.strokeRect(24, 24, c.width - 48, c.height - 48);
 
-    ctx.fillStyle = '#6ee7b7';
-    ctx.font = 'bold 34px ui-monospace, monospace';
+    ctx.fillStyle = '#7c5cff';
+    ctx.font = 'bold 34px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillText('level941 — public board', 60, 90);
 
-    ctx.fillStyle = '#8b929c';
-    ctx.font = '18px ui-monospace, monospace';
+    ctx.fillStyle = '#8b9096';
+    ctx.font = '18px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillText(row.wallet, 60, 128);
 
     var lines = [
@@ -456,17 +605,17 @@
     ];
     var y = 200;
     lines.forEach(function (pair) {
-      ctx.fillStyle = '#8b929c';
-      ctx.font = '16px ui-monospace, monospace';
+      ctx.fillStyle = '#8b9096';
+      ctx.font = '16px "JetBrains Mono", ui-monospace, monospace';
       ctx.fillText(pair[0].toUpperCase(), 60, y);
-      ctx.fillStyle = '#e7e9ec';
-      ctx.font = 'bold 40px ui-monospace, monospace';
+      ctx.fillStyle = '#e7e9ea';
+      ctx.font = 'bold 40px "JetBrains Mono", ui-monospace, monospace';
       ctx.fillText(pair[1], 60, y + 42);
       y += 78;
     });
 
-    ctx.fillStyle = '#5b6270';
-    ctx.font = '14px ui-monospace, monospace';
+    ctx.fillStyle = '#8b9096';
+    ctx.font = '14px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillText('multipliers split the pie, they never grow it.', 60, c.height - 50);
     ctx.fillText('daily bread is fixed by the curve. weights decide the slices.', 60, c.height - 30);
 
@@ -482,38 +631,52 @@
     }, 'image/png');
   }
 
-  function init(data) {
+  function render(data) {
     boardData = data;
     renderTotals(data);
     renderTable(data);
-    drawTrajectory(0);
+    if (firstLoad) {
+      drawTrajectory(0);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () { drawTrajectory(lastMarkStreak); });
+      }
+    }
     document.getElementById('footerNote').textContent =
       'generated ' + (data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—') +
-      ' for ' + (data.date || '—') + '. recompute it yourself from the public snapshot.';
-
-    document.getElementById('lookupBtn').addEventListener('click', function () {
-      var raw = document.getElementById('walletInput').value;
-      renderLookup(boardData, findByWalletInput(boardData, raw), raw);
-    });
-    document.getElementById('walletInput').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') document.getElementById('lookupBtn').click();
-    });
+      ' for ' + (data.date || '—') + '. rechecks every ' + Math.round(POLL_MS / 1000) + 's. recompute it yourself from the public snapshot.';
+    firstLoad = false;
   }
 
-  fetch('board.json', { cache: 'no-store' })
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(init)
-    .catch(function (e) {
-      var err = document.getElementById('loadError');
-      err.style.display = 'block';
-      err.textContent =
-        'Could not load board.json (' + e.message + '). Run "npm run publish-board" and serve this ' +
-        'directory over http (e.g. "npx serve docs"), not file://.';
-      drawTrajectory(0);
-    });
+  function poll() {
+    fetch('board.json', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        document.getElementById('loadError').style.display = 'none';
+        render(data);
+      })
+      .catch(function (e) {
+        var err = document.getElementById('loadError');
+        err.style.display = 'block';
+        err.textContent =
+          'Could not load board.json (' + e.message + '). Run "npm run publish-board" and serve this ' +
+          'directory over http (e.g. "npx serve docs"), not file://.';
+        if (firstLoad) drawTrajectory(0);
+      });
+  }
+
+  document.getElementById('lookupBtn').addEventListener('click', function () {
+    var raw = document.getElementById('walletInput').value;
+    renderLookup(boardData || {}, boardData ? findByWalletInput(boardData, raw) : null, raw);
+  });
+  document.getElementById('walletInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('lookupBtn').click();
+  });
+
+  poll();
+  setInterval(poll, POLL_MS);
 })();
 </script>
 </body>

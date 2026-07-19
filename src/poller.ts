@@ -274,6 +274,15 @@ export async function writeLiveState(cfg: AppConfig): Promise<LiveState> {
 // Best-effort git commit + push of docs/live-state.json only. Never throws
 // out of the poll loop: a publish failure (no repo yet, no remote, offline)
 // just means the next cycle tries again.
+//
+// Self-healing: if the remote has moved (someone edited a file via GitHub's
+// UI, another machine pushed) the plain push is rejected. Rather than fail
+// silently forever -- which once let 1,200+ dead-end local commits pile up
+// unpushed -- this rebases the one tiny commit onto the new remote tip and
+// retries once. `git rebase` refuses to run at all if the working tree has
+// ANY uncommitted changes (not just in live-state.json), so this can never
+// clobber concurrent edits sitting in this same directory: it just fails
+// cleanly, gets caught below, and the next cycle tries again.
 export function publishLiveState(): void {
   const opts = { stdio: 'pipe' as const };
   try {
@@ -291,8 +300,26 @@ export function publishLiveState(): void {
       /* exit 1 = there is a diff, fall through to commit */
     }
     execFileSync('git', ['commit', '-m', `live-state: ${new Date().toISOString()}`], opts);
-    execFileSync('git', ['push'], opts);
-    console.log('publish: live-state.json committed and pushed.');
+    try {
+      execFileSync('git', ['push'], opts);
+      console.log('publish: live-state.json committed and pushed.');
+      return;
+    } catch {
+      /* rejected, most likely non-fast-forward -- try one rebase+retry */
+    }
+    try {
+      execFileSync('git', ['fetch', 'origin'], opts);
+      execFileSync('git', ['rebase', 'origin/main'], opts);
+      execFileSync('git', ['push'], opts);
+      console.log('publish: remote had moved, rebased onto it and pushed.');
+    } catch {
+      try {
+        execFileSync('git', ['rebase', '--abort'], opts);
+      } catch {
+        /* nothing to abort */
+      }
+      console.log('publish: remote has diverged and could not be auto-rebased. Skipping this cycle.');
+    }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.log(`publish: skipped (${msg.slice(0, 160)})`);

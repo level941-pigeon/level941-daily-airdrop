@@ -4,56 +4,77 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>level941 — observatory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
-  /* Deliberately dark-only. This is an instrument panel, not a document —
-     forcing a light mode would undercut the whole idea. Six named colors,
-     the accent reserved for live events only. */
+  /* "a pigeon built this." Dark pigeon-feather slate, one living accent:
+     the oil-slick iridescence on a pigeon's neck. That gradient is reserved
+     for genuinely live things -- the countdown, new events, value changes.
+     Everything else stays a calm, precise instrument panel. */
   :root {
-    --bg: #15120f;
-    --panel: #1e1a16;
-    --border: #332c25;
-    --text: #ece6db;
-    --muted: #93897a;
-    --accent: #dfa25a;
+    --bg: #16181b;
+    --panel: #1e2124;
+    --panel-2: #262a2e;
+    --border: #34393e;
+    --text: #e7e9ea;
+    --muted: #8b9096;
 
-    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --iri-1: #00d9a3;
+    --iri-2: #7c5cff;
+    --iri-3: #ff5ec4;
+    --iri-4: #4dc9ff;
+    --iridescent: linear-gradient(115deg, var(--iri-1) 0%, var(--iri-2) 30%, var(--iri-3) 60%, var(--iri-4) 85%, var(--iri-1) 100%);
+    --accent: var(--iri-4); /* calm, static accent for persistent chrome: links, borders */
+
+    --font-display: "Fraunces", Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
     --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
     background: var(--bg);
-    background-image: radial-gradient(ellipse at 50% -10%, rgba(223, 162, 90, 0.05), transparent 60%);
     color: var(--text);
     font-family: var(--font-ui);
     line-height: 1.5;
-    padding: 28px 16px 72px;
+    padding: 24px 16px 72px;
   }
   .wrap { max-width: 880px; margin: 0 auto; }
 
   a { color: inherit; }
   a:focus-visible, button:focus-visible, input:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--iri-4);
     outline-offset: 2px;
   }
 
-  header { margin-bottom: 22px; }
-  header h1 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 2rem;
-    letter-spacing: 0.01em;
-    margin: 0 0 6px;
-    color: var(--text);
+  /* ---- shared site header ---- */
+  .site-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--border);
   }
-  header .sub {
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .pigeon-mark { width: 32px; height: 27px; flex-shrink: 0; }
+  .pigeon-mark .pg-body { fill: var(--text); }
+  .pigeon-mark .pg-neck { fill: var(--iri-2); }
+  .wordmark { font-family: var(--font-display); font-weight: 500; font-size: 1.15rem; }
+  .site-nav { display: flex; gap: 16px; margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+  .site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  .site-nav a:hover { color: var(--text); }
+  .site-nav a.active { color: var(--text); border-bottom-color: var(--iri-4); }
+
+  .page-sub {
     color: var(--muted);
     font-size: 0.88rem;
+    margin: 0 0 18px;
   }
-  header .sub a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
-  header .sub a:hover { color: var(--accent); }
+  .page-sub a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .page-sub a:hover { color: var(--iri-4); }
 
   .status-line {
     display: flex;
@@ -62,7 +83,7 @@
     font-family: var(--font-mono);
     font-size: 0.78rem;
     color: var(--muted);
-    margin-top: 10px;
+    margin-bottom: 22px;
   }
   .pulse-dot {
     width: 8px; height: 8px; border-radius: 50%;
@@ -70,16 +91,56 @@
     flex-shrink: 0;
   }
   .pulse-dot.live {
-    background: var(--accent);
-    box-shadow: 0 0 0 0 rgba(223, 162, 90, 0.6);
+    background: var(--iridescent);
+    background-size: 300% 100%;
+    box-shadow: 0 0 0 0 rgba(255, 94, 196, 0.55);
   }
   @media (prefers-reduced-motion: no-preference) {
     .pulse-dot.live { animation: pulseOnce 1.6s ease-out; }
   }
   @keyframes pulseOnce {
-    0%   { box-shadow: 0 0 0 0 rgba(223, 162, 90, 0.55); }
-    70%  { box-shadow: 0 0 0 10px rgba(223, 162, 90, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(223, 162, 90, 0); }
+    0%   { box-shadow: 0 0 0 0 rgba(255, 94, 196, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(255, 94, 196, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 94, 196, 0); }
+  }
+  @keyframes sheenSweep { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+
+  /* ---- 9:41 countdown, the appointment ---- */
+  .countdown-block { margin-bottom: 22px; }
+  .countdown-label {
+    font-family: var(--font-ui);
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .countdown-frame {
+    display: inline-block;
+    position: relative;
+    padding: 14px 24px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+  }
+  .countdown-frame::before, .countdown-frame::after {
+    content: ""; position: absolute; width: 10px; height: 10px; border-color: var(--iri-3);
+  }
+  .countdown-frame::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+  .countdown-frame::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+  .countdown-digits {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 2.1rem;
+    letter-spacing: 0.02em;
+    background: var(--iridescent);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .countdown-digits { animation: sheenSweep 8s linear infinite; }
   }
 
   .totals {
@@ -90,7 +151,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    margin: 22px 0;
+    margin: 0 0 22px;
   }
   .tile {
     background: var(--panel);
@@ -109,6 +170,17 @@
     margin-top: 5px;
     color: var(--text);
     font-variant-numeric: tabular-nums;
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .tile .value.flash { animation: numberFlash 0.9s ease-out; }
+  }
+  @keyframes numberFlash {
+    0% {
+      background: var(--iridescent); background-size: 300% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    100% { background: none; -webkit-background-clip: initial; background-clip: initial; color: var(--text); }
   }
 
   section {
@@ -120,8 +192,9 @@
   }
   section h2 {
     font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1.15rem;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    font-size: 1.2rem;
     margin: 0 0 4px;
     color: var(--text);
   }
@@ -164,19 +237,17 @@
   .feed-row .solscan {
     font-family: var(--font-ui);
     font-size: 0.78rem;
-    color: var(--accent);
+    color: var(--iri-4);
     text-decoration: none;
     white-space: nowrap;
   }
   .feed-row .solscan:hover { text-decoration: underline; }
 
   @media (prefers-reduced-motion: no-preference) {
-    .feed-row.entering {
-      animation: rowIn 0.55s ease-out;
-    }
+    .feed-row.entering { animation: rowIn 0.55s ease-out; }
   }
   @keyframes rowIn {
-    from { opacity: 0; transform: translateY(-6px); background: rgba(223, 162, 90, 0.10); }
+    from { opacity: 0; transform: translateY(-6px); background: rgba(124, 92, 255, 0.14); }
     to   { opacity: 1; transform: translateY(0); background: transparent; }
   }
 
@@ -218,7 +289,7 @@
     text-align: right;
     white-space: nowrap;
   }
-  .box-row .status.is-ready, .box-row .status.is-fastlane { color: var(--accent); }
+  .box-row .status.is-ready, .box-row .status.is-fastlane { color: var(--iri-4); }
   .box-row .status.is-blocked { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--border); }
 
   .layer-note {
@@ -231,7 +302,7 @@
   .error-banner {
     background: var(--panel);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
+    border-left: 3px solid var(--iri-3);
     border-radius: 8px;
     padding: 14px 16px;
     font-size: 0.85rem;
@@ -251,18 +322,43 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>level941 — observatory</h1>
-    <p class="sub">the live engine, watchable. a separate surface from <a href="index.html">the public board</a>.</p>
-    <div class="status-line">
-      <span class="pulse-dot" id="pulseDot"></span>
-      <span id="statusText">connecting…</span>
-    </div>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <svg class="pigeon-mark" viewBox="0 0 120 100" aria-hidden="true">
+        <path class="pg-body" d="M28,60 C28,40 50,28 72,32 C92,35 100,48 96,58 C90,72 66,78 46,74 C34,71 28,68 28,60 Z"/>
+        <path class="pg-neck" d="M74,34 C82,32 90,36 92,44 C93,50 88,54 82,52 C76,50 72,44 74,34 Z"/>
+        <circle class="pg-body" cx="90" cy="30" r="11"/>
+        <path class="pg-body" d="M99,28 L109,31 L99,34 Z"/>
+        <path class="pg-body" d="M12,55 L28,50 L29,60 L14,65 Z"/>
+      </svg>
+      <span class="wordmark">level941</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">board</a>
+      <a href="observatory.html" class="active">observatory</a>
+    </nav>
   </header>
+
+  <p class="page-sub">the live engine, watchable. a separate surface from <a href="index.html">the public board</a>.</p>
+  <div class="status-line">
+    <span class="pulse-dot" id="pulseDot"></span>
+    <span id="statusText">connecting…</span>
+  </div>
 
   <div class="error-banner" id="errorBanner"></div>
 
-  <div class="totals" id="totals"></div>
+  <div class="countdown-block">
+    <div class="countdown-label">next 9:41</div>
+    <div class="countdown-frame"><div class="countdown-digits" id="countdown">--:--:--</div></div>
+  </div>
+
+  <div class="totals" id="totals">
+    <div class="tile"><div class="label">holders</div><div class="value" id="val-holders">—</div></div>
+    <div class="tile"><div class="label">sol balance</div><div class="value" id="val-sol">—</div></div>
+    <div class="tile"><div class="label">pigeon balance</div><div class="value" id="val-pigeon">—</div></div>
+    <div class="tile"><div class="label">all-time distributed</div><div class="value" id="val-distributed">—</div></div>
+    <div class="tile"><div class="label">curve headroom today</div><div class="value" id="val-headroom">—</div></div>
+  </div>
 
   <section>
     <h2>the heartbeat</h2>
@@ -287,6 +383,7 @@
   var POLL_MS = 10000;
   var seenKeys = new Set();
   var firstLoad = true;
+  var lastValues = {};
 
   function fmtNum(n, maxFrac) {
     return Number(n).toLocaleString(undefined, { maximumFractionDigits: maxFrac == null ? 4 : maxFrac });
@@ -322,23 +419,47 @@
     return e;
   }
 
+  // ---- live 9:41 countdown, ticks every second off the client clock ----
+  function nextNineFortyOne() {
+    var now = new Date();
+    var next = new Date(now);
+    next.setHours(9, 41, 0, 0);
+    if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+    return next;
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tickCountdown() {
+    var diff = Math.max(0, nextNineFortyOne().getTime() - Date.now());
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var cd = document.getElementById('countdown');
+    if (cd) cd.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  // Updates a tile's value in place and flashes it iridescent if changed
+  // since the last poll. First render never flashes (nothing to compare).
+  function setValue(id, text) {
+    var elm = document.getElementById(id);
+    if (!elm) return;
+    var changed = lastValues.hasOwnProperty(id) && lastValues[id] !== text && !firstLoad;
+    lastValues[id] = text;
+    elm.textContent = text;
+    if (changed) {
+      elm.classList.remove('flash');
+      void elm.offsetWidth;
+      elm.classList.add('flash');
+    }
+  }
+
   function renderTotals(data) {
-    var wrap = document.getElementById('totals');
-    var items = [
-      ['holders', fmtNum(data.holderCount, 0)],
-      ['sol balance', fmtNum(data.solBalance, 4)],
-      ['pigeon balance', fmtNum(data.pigeonBalanceTokens, 2)],
-      ['all-time distributed', fmtNum(data.allTimeDistributedTokens, 2)],
-      ['curve headroom today', fmtNum(data.curveHeadroomTokens, 2)],
-      ['next 9:41', new Date(data.next941).toLocaleString()],
-    ];
-    wrap.innerHTML = '';
-    items.forEach(function (pair) {
-      var tile = el('div', 'tile');
-      tile.appendChild(el('div', 'label', pair[0]));
-      tile.appendChild(el('div', 'value', pair[1]));
-      wrap.appendChild(tile);
-    });
+    setValue('val-holders', fmtNum(data.holderCount, 0));
+    setValue('val-sol', fmtNum(data.solBalance, 4));
+    setValue('val-pigeon', fmtNum(data.pigeonBalanceTokens, 2));
+    setValue('val-distributed', fmtNum(data.allTimeDistributedTokens, 2));
+    setValue('val-headroom', fmtNum(data.curveHeadroomTokens, 2));
   }
 
   function eventKey(e) {
@@ -436,6 +557,10 @@
     dot.classList.remove('live');
     void dot.offsetWidth; // restart animation
     dot.classList.add('live');
+    // Silence punctuated by real events: revert to a quiet resting dot once
+    // the pulse finishes, rather than staying iridescent (and animating)
+    // forever after the first event ever arrives.
+    setTimeout(function () { dot.classList.remove('live'); }, 1700);
   }
 
   function render(data) {
