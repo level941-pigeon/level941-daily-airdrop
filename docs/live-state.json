@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-19T10:52:39.278Z",
+  "generatedAt": "2026-07-19T10:53:55.684Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -366,7 +366,7 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 27h remaining",
-      "coolingSecondsRemaining": 96914,
+      "coolingSecondsRemaining": 96838,
       "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
     },
     {
@@ -393,7 +393,7 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 4h remaining",
-      "coolingSecondsRemaining": 11620,
+      "coolingSecondsRemaining": 11544,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
     },
     {
