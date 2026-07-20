@@ -8,6 +8,15 @@ import { updateStreaks, StreakState } from '../src/holders.js';
 import { selectWeightedWinners, Ticketed } from '../src/draw.js';
 import { humanToRaw, inSellerTimeout, daysBetween, computeAllocations, streakWeight, HolderWeight } from '../src/math.js';
 import { assertNoSecrets } from '../src/poller.js';
+import {
+  assessEngagerQuality,
+  assessVelocity,
+  scoreWithDeepDive,
+  scoreTriageOnly,
+  rawReachScore,
+  EngagerSignal,
+} from '../src/flock-signal-scoring.js';
+import { nextWeeklyReveal } from '../src/flock-signal.js';
 
 let pass = 0;
 let fail = 0;
@@ -309,4 +318,122 @@ if (fail > 0) process.exit(1);
 }
 
 console.log(`\nobservatory guard: ${pass}/${pass + fail} passed`);
+if (fail > 0) process.exit(1);
+
+// ---- flock signal: anti-farm scoring engine ----
+{
+  const now = new Date('2026-07-20T12:00:00.000Z');
+  const daysAgo = (d: number) => new Date(now.getTime() - d * 86_400_000).toISOString();
+
+  function realAccount(handle: string, engagedAt: string): EngagerSignal {
+    return {
+      handle,
+      verified: true,
+      followerCount: 800,
+      followingCount: 400,
+      accountCreatedAt: daysAgo(900),
+      hasProfileImage: true,
+      postCount: 4000,
+      engagedAt,
+    };
+  }
+  function farmAccount(handle: string, engagedAt: string): EngagerSignal {
+    return {
+      handle,
+      verified: true, // paid-verified, but everything else screams farm
+      followerCount: 0,
+      followingCount: 900,
+      accountCreatedAt: daysAgo(3),
+      hasProfileImage: false,
+      postCount: 1,
+      engagedAt,
+    };
+  }
+
+  // ---- (a) quality weighting on individual engagers ----
+  const realQ = assessEngagerQuality(realAccount('real', now.toISOString()), now);
+  const farmQ = assessEngagerQuality(farmAccount('farm', now.toISOString()), now);
+  ok('established real-looking account keeps full weight', realQ.weight === 1 && !realQ.suspicious);
+  ok('fresh/no-pfp/no-history/no-follower account is heavily discounted', farmQ.weight < 0.05 && farmQ.suspicious);
+  ok('discount reasons are specific, not a black box', farmQ.reasons.length >= 3);
+
+  // ---- (b) the load-bearing property: same RAW count, real cost gap ----
+  // 20 verified likes from quality accounts vs 20 verified likes from
+  // paid-but-farmed accounts. If the scores land anywhere close, quality
+  // weighting isn't doing its job and verification alone is the only gate
+  // -- exactly the gap this design exists to close.
+  // Spread naturally over ~3 hours -- realistic organic timing, and keeps
+  // this comparison isolated to quality weighting rather than also tripping
+  // the (separately tested below) clustering check.
+  const spread = (i: number) => new Date(now.getTime() + i * 9 * 60_000).toISOString();
+  const qualityLikers = Array.from({ length: 20 }, (_, i) => realAccount(`real${i}`, spread(i)));
+  const farmLikers = Array.from({ length: 20 }, (_, i) => farmAccount(`farm${i}`, spread(i)));
+  const rawCounts = { likes: 20, reposts: 0, replies: 0, quotes: 0, bookmarks: null, impressions: null };
+
+  const qualityScore = scoreWithDeepDive(qualityLikers, [], [], rawCounts, 5000, daysAgo(1), now);
+  const farmScore = scoreWithDeepDive(farmLikers, [], [], rawCounts, 5000, daysAgo(1), now);
+  ok(
+    'same raw like count: quality-account score is dramatically higher than farm-account score',
+    qualityScore.verifiedWeightedScore > farmScore.verifiedWeightedScore * 10
+  );
+  ok('farm entry is flagged low-quality', farmScore.flags.some((f) => f.includes('low-quality')));
+  ok('farm entry confidence drops to low', farmScore.confidence === 'low');
+  ok('quality entry confidence stays high', qualityScore.confidence === 'high');
+
+  // ---- (c) velocity/clustering anomaly detection ----
+  const clusteredTimes = Array.from({ length: 15 }, () => now.toISOString()); // all in the same instant
+  const organicTimes = Array.from({ length: 15 }, (_, i) => new Date(now.getTime() + i * 3_600_000).toISOString()); // spread over 15h
+  const clustered = assessVelocity(clusteredTimes, 5000, daysAgo(1));
+  const organic = assessVelocity(organicTimes, 5000, daysAgo(1));
+  ok('identical-timing burst is flagged anomalous', clustered.anomalous);
+  ok('naturally spread-out engagement is not flagged', !organic.anomalous);
+
+  const implausibleReach = assessVelocity(
+    Array.from({ length: 500 }, () => now.toISOString()),
+    100, // tiny follower count
+    now.toISOString()
+  );
+  ok('engagement far exceeding follower count within the hour is flagged', implausibleReach.anomalous);
+
+  // ---- (d) triage-only entries never get a fabricated verified score ----
+  const triage = scoreTriageOnly({ likes: 900, reposts: 300, replies: 50, quotes: 10, bookmarks: null, impressions: null });
+  ok('triage-only entry has zero verified-weighted score (never deep-dived)', triage.verifiedWeightedScore === 0);
+  ok('triage-only entry is marked low confidence, not silently trusted', triage.confidence === 'low');
+  ok('triage-only entry states plainly it was not deep-dived', !triage.deepDivePerformed);
+  ok(
+    'a huge raw-reach entry still has a real, comparable raw score so it can surface anyway',
+    rawReachScore({ likes: 900, reposts: 300, replies: 50, quotes: 10, bookmarks: null, impressions: null }) > 0
+  );
+}
+
+console.log(`\nflock signal scoring: ${pass}/${pass + fail} passed`);
+if (fail > 0) process.exit(1);
+
+// ---- flock signal: weekly reveal clock (date-boundary logic, worth its own tests) ----
+{
+  // 2026-07-19 is a Sunday, 2026-07-20 is a Monday, 2026-07-26 is the next Sunday.
+  const mondayNoon = new Date(2026, 6, 20, 12, 0, 0);
+  const revealFromMonday = nextWeeklyReveal(mondayNoon);
+  ok(
+    'from a Monday, next reveal is this week\'s Sunday at 9:41',
+    revealFromMonday.getFullYear() === 2026 && revealFromMonday.getMonth() === 6 &&
+    revealFromMonday.getDate() === 26 && revealFromMonday.getHours() === 9 && revealFromMonday.getMinutes() === 41
+  );
+
+  const sundayBeforeReveal = new Date(2026, 6, 19, 8, 0, 0);
+  const revealFromEarlySunday = nextWeeklyReveal(sundayBeforeReveal);
+  ok(
+    'on reveal day before 9:41, next reveal is later TODAY, not next week',
+    revealFromEarlySunday.getDate() === 19 && revealFromEarlySunday.getMonth() === 6
+  );
+
+  const sundayAfterReveal = new Date(2026, 6, 19, 10, 0, 0);
+  const revealFromLateSunday = nextWeeklyReveal(sundayAfterReveal);
+  ok(
+    'on reveal day after 9:41 has passed, next reveal jumps a full week forward, not today again',
+    revealFromLateSunday.getDate() === 26 && revealFromLateSunday.getMonth() === 6
+  );
+}
+
+console.log(`\nflock signal reveal clock: ${pass}/${pass + fail} passed`);
 if (fail > 0) process.exit(1);

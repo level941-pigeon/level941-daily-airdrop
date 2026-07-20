@@ -37,6 +37,8 @@ Commands:
   npm run publish-board       Emit docs/board.json from today's snapshot.
   npm run flock-scan          Incremental recruit-attribution crawl (new holders only).
   npm run publish-flock       Emit docs/flock.json from tracked recruit state.
+  npm run flock-signal        Crawl + score + publish docs/flock-signal.json. Standalone --
+                              needs ONLY X_API_BEARER_TOKEN, not the wallet config below.
 `;
 
 async function main(): Promise<void> {

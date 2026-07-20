@@ -30,6 +30,7 @@
     "publish-board": "tsx src/index.ts publish-board",
     "flock-scan": "tsx src/index.ts flock-scan",
     "publish-flock": "tsx src/index.ts publish-flock",
+    "flock-signal": "tsx src/flock-signal.ts",
     "dashboard-poll": "tsx src/poller.ts",
     "dashboard-poll-once": "tsx src/poller.ts once"
   },

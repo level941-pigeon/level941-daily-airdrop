@@ -1,0 +1,69 @@
+name: Flock Signal weekly crawl
+
+# Read-only, scheduler-based, no always-on server. This workflow's only
+# credential is a read-only X API bearer token -- it never sees
+# AIRDROP_PRIVATE_KEY or RPC_URL, and never touches the local poller or
+# live-data pipeline. It writes docs/flock-signal.json (served by the
+# existing GitHub Pages site) and flock-signal-state/ (the budget ledger +
+# week-history, committed because GitHub Actions runners are ephemeral and
+# have no persistent disk between runs -- data/ is gitignored precisely
+# because it's NOT meant to survive off this machine, which is exactly the
+# opposite of what this workflow needs).
+
+on:
+  # Schedule intentionally OFF for now. The contest is being run manually
+  # for the first few weeks to confirm real participation before paying for
+  # live X API access -- no X_API_BEARER_TOKEN secret is set either, so this
+  # workflow can't spend anything even if triggered. Uncomment the schedule
+  # block below once ready to automate, and set FLOCK_SIGNAL_* secrets/vars.
+  #
+  # schedule:
+  #   # Sundays 13:41 UTC. Adjust to match your timezone's 9:41 if that
+  #   # matters to you -- GitHub Actions cron is UTC only, and DST will drift
+  #   # this relative to local time twice a year.
+  #   - cron: '41 13 * * 0'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - name: Run Flock Signal crawl + score + publish
+        env:
+          X_API_BEARER_TOKEN: ${{ secrets.X_API_BEARER_TOKEN }}
+          FLOCK_SIGNAL_MONTHLY_CAP_USD: ${{ vars.FLOCK_SIGNAL_MONTHLY_CAP_USD }}
+          FLOCK_SIGNAL_SHORTLIST_SIZE: ${{ vars.FLOCK_SIGNAL_SHORTLIST_SIZE }}
+          FLOCK_SIGNAL_SEARCH_QUERY: ${{ vars.FLOCK_SIGNAL_SEARCH_QUERY }}
+        run: npm run flock-signal
+
+      - name: Commit and push the published board + budget state
+        run: |
+          git config user.name "flock-signal-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/flock-signal.json flock-signal-state/
+          if git diff --cached --quiet; then
+            echo "No changes to publish."
+            exit 0
+          fi
+          git commit -m "flock-signal: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # The local poller commits to main independently (every ~75s while
+          # it's running) -- a weekly job landing mid-cycle is unlikely but
+          # possible. One fetch+rebase retry before giving up, same
+          # self-healing pattern as poller.ts, rather than a bare push that
+          # just fails outright on any conflict.
+          if ! git push; then
+            git fetch origin
+            git rebase origin/main
+            git push
+          fi
