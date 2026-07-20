@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T13:39:59.615Z",
+  "generatedAt": "2026-07-20T13:41:15.458Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -327,18 +327,18 @@
     {
       "mint": "9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump",
       "amountTokens": "0.00005",
-      "valueUsd": 3.233611,
-      "status": "ready",
-      "reason": "cleared, worth ~$3.23",
+      "valueUsd": null,
+      "status": "pending-value",
+      "reason": "no sellable quote yet, retrying next run",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump"
     },
     {
       "mint": "4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump",
       "amountTokens": "0.000042",
-      "valueUsd": 1.971208,
-      "status": "ready",
-      "reason": "cleared, worth ~$1.97",
+      "valueUsd": null,
+      "status": "pending-value",
+      "reason": "no sellable quote yet, retrying next run",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump"
     },
@@ -348,41 +348,41 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 1h remaining",
-      "coolingSecondsRemaining": 474,
+      "coolingSecondsRemaining": 398,
       "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
     },
     {
       "mint": "J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump",
       "amountTokens": "11009.471926",
-      "valueUsd": 9.851653,
+      "valueUsd": 1.768563,
       "status": "ready",
-      "reason": "cleared, worth ~$9.85",
+      "reason": "cleared, worth ~$1.77",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump"
     },
     {
       "mint": "4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump",
       "amountTokens": "1555522.589997",
-      "valueUsd": 3.823377,
+      "valueUsd": 3.852505,
       "status": "ready",
-      "reason": "cleared, worth ~$3.82",
+      "reason": "cleared, worth ~$3.85",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump"
     },
     {
       "mint": "A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump",
       "amountTokens": "100492447.15929",
-      "valueUsd": null,
-      "status": "pending-value",
-      "reason": "no sellable quote yet, retrying next run",
+      "valueUsd": 235.2775,
+      "status": "ready",
+      "reason": "cleared, worth ~$235.28",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
     }
   ],
-  "holderCount": 1039,
+  "holderCount": 1031,
   "solBalance": 0.158651664,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
-  "next941": "2026-07-20T13:41:00.000Z"
+  "next941": "2026-07-21T13:41:00.000Z"
 }
