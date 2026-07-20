@@ -28,6 +28,8 @@
     "og-founder-preview": "tsx src/index.ts og-founder-preview",
     "og-founder-pay": "tsx src/index.ts og-founder-pay",
     "publish-board": "tsx src/index.ts publish-board",
+    "flock-scan": "tsx src/index.ts flock-scan",
+    "publish-flock": "tsx src/index.ts publish-flock",
     "dashboard-poll": "tsx src/poller.ts",
     "dashboard-poll-once": "tsx src/poller.ts once"
   },

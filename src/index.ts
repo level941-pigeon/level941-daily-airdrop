@@ -9,6 +9,7 @@ import { runFounderPreview, runFounderPay } from './founder.js';
 import { runOgFounderPreview, runOgFounderPay } from './og-founder.js';
 import { setNotifyWebhook } from './airdrop.js';
 import { runPublishBoard } from './board.js';
+import { runFlockScan, runPublishFlock } from './flock.js';
 
 const USAGE = `level941-daily-airdrop
 
@@ -34,6 +35,8 @@ Commands:
   npm run og-founder-preview  OG founder seed: preview recipients + cold-floor check.
   npm run og-founder-pay      Execute OG founder seed (needs OG_FOUNDER_EVENT_ID).
   npm run publish-board       Emit docs/board.json from today's snapshot.
+  npm run flock-scan          Incremental recruit-attribution crawl (new holders only).
+  npm run publish-flock       Emit docs/flock.json from tracked recruit state.
 `;
 
 async function main(): Promise<void> {
@@ -107,6 +110,12 @@ async function main(): Promise<void> {
       break;
     case 'publish-board':
       await runPublishBoard(cfg);
+      break;
+    case 'flock-scan':
+      await runFlockScan(cfg);
+      break;
+    case 'publish-flock':
+      await runPublishFlock(cfg);
       break;
     default:
       console.log(USAGE);

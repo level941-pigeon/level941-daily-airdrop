@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>level941 — flock builder</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Ccircle cx='8' cy='16' r='7' fill='%237c5cff'/%3E%3Cpath d='M24 4 L48 16 L24 28' stroke='%23e7e9ea' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16181b;
+    --panel: #1e2124;
+    --panel-2: #262a2e;
+    --border: #34393e;
+    --text: #e7e9ea;
+    --muted: #8b9096;
+
+    --iri-1: #00d9a3;
+    --iri-2: #7c5cff;
+    --iri-3: #ff5ec4;
+    --iri-4: #4dc9ff;
+    --iridescent: linear-gradient(115deg, var(--iri-1) 0%, var(--iri-2) 30%, var(--iri-3) 60%, var(--iri-4) 85%, var(--iri-1) 100%);
+    --accent: var(--iri-4);
+
+    --font-display: "Unbounded", "Fraunces", Georgia, serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    padding: 24px 16px 64px;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse 900px 700px at 8% -10%, rgba(0, 217, 163, 0.13), transparent 60%),
+      radial-gradient(ellipse 1000px 800px at 108% 15%, rgba(124, 92, 255, 0.13), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 50% 115%, rgba(255, 94, 196, 0.10), transparent 60%);
+    background-size: 140% 140%, 150% 150%, 130% 130%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    body::before { animation: atmosphereDrift 24s ease-in-out infinite alternate; }
+  }
+  @keyframes atmosphereDrift {
+    0% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+    100% { background-position: 12% 12%, 88% 18%, 46% 108%; }
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; opacity: 0.035; pointer-events: none;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; position: relative; z-index: 1; }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--iri-4);
+    outline-offset: 2px;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-ui);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .mark { width: 34px; height: 17px; flex-shrink: 0; }
+  .mark-dot { fill: var(--iri-2); }
+  .mark-chev { stroke: var(--text); }
+  @media (prefers-reduced-motion: no-preference) {
+    .mark-dot { animation: dotBreathe 4s ease-in-out infinite; }
+  }
+  @keyframes dotBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .wordmark { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+  .site-nav { display: flex; align-items: center; gap: 16px; margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+  .site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  .site-nav a:hover { color: var(--text); }
+  .site-nav a.active { color: var(--text); border-image: var(--iridescent) 1; border-bottom: 2px solid; }
+
+  .page-sub {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 18px;
+    font-family: var(--font-ui);
+  }
+  .page-sub a { color: var(--iri-4); text-decoration: underline; text-underline-offset: 2px; }
+
+  .caption {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+  }
+
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .tile {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .tile .label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-ui); }
+  .tile .value { font-size: 1.1rem; margin-top: 4px; color: var(--iri-1); font-weight: 500; }
+
+  section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  section h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 9px;
+  }
+  section h2::before {
+    content: ""; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--iridescent); background-size: 300% 100%; flex-shrink: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) { section h2::before { animation: sheenSweep 5s linear infinite; } }
+  @keyframes sheenSweep { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+  section .section-sub { color: var(--muted); font-size: 0.8rem; margin: 0 0 14px; }
+
+  /* ---- flock board: same crown treatment as the main leaderboard ---- */
+  .flock-list { display: flex; flex-direction: column; gap: 0; }
+  .flock-row {
+    border-bottom: 1px solid var(--border);
+    border-left: 2px solid transparent;
+    padding: 10px 12px;
+  }
+  .flock-row:last-child { border-bottom: none; }
+  .flock-head {
+    display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;
+  }
+  .flock-head .rank-num { font-family: var(--font-mono); font-weight: 600; width: 34px; flex-shrink: 0; }
+  .flock-head .recruiter { font-family: var(--font-mono); flex: 1; }
+  .flock-head .count { font-family: var(--font-mono); color: var(--iri-1); font-weight: 500; white-space: nowrap; }
+  .flock-head .caret { color: var(--muted); font-size: 0.75rem; transition: transform 0.2s ease; }
+  .flock-row.open .caret { transform: rotate(90deg); }
+
+  .flock-row[data-crown="1"] {
+    box-shadow: inset 4px 0 0 0 var(--iri-3), 0 0 22px -4px rgba(255, 94, 196, 0.55);
+    background: rgba(255, 94, 196, 0.06);
+  }
+  .flock-row[data-crown="1"] .rank-num {
+    background: var(--iridescent); background-size: 300% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .flock-row[data-crown="1"] .rank-num { animation: sheenSweep 2.6s linear infinite; }
+    .flock-row[data-crown="1"] { animation: crownGlow 2.1s ease-in-out infinite; }
+  }
+  @keyframes crownGlow {
+    0%, 100% { box-shadow: inset 4px 0 0 0 var(--iri-3), 0 0 16px -4px rgba(255, 94, 196, 0.4); }
+    50%      { box-shadow: inset 4px 0 0 0 var(--iri-2), 0 0 26px -2px rgba(124, 92, 255, 0.55); }
+  }
+  .flock-row[data-crown="2"], .flock-row[data-crown="3"] {
+    box-shadow: inset 3px 0 0 0 var(--iri-2);
+    background: rgba(124, 92, 255, 0.045);
+  }
+  .flock-row[data-crown="2"] .rank-num, .flock-row[data-crown="3"] .rank-num { color: var(--iri-2); }
+  @media (prefers-reduced-motion: no-preference) {
+    .flock-row[data-crown="2"], .flock-row[data-crown="3"] {
+      animation: crownGlowSoft 3.3s ease-in-out infinite;
+      animation-delay: calc(-1s * var(--stagger, 0));
+    }
+  }
+  @keyframes crownGlowSoft {
+    0%, 100% { box-shadow: inset 3px 0 0 0 var(--iri-2), 0 0 7px -2px rgba(124, 92, 255, 0.3); }
+    50%      { box-shadow: inset 3px 0 0 0 var(--iri-4), 0 0 13px -1px rgba(77, 201, 255, 0.4); }
+  }
+  .flock-row[data-crown="top10"] { box-shadow: inset 2px 0 0 0 rgba(0, 217, 163, 0.55); }
+
+  .recruit-list {
+    display: none;
+    margin: 10px 0 4px 46px;
+    border-left: 1px solid var(--border);
+    padding-left: 12px;
+  }
+  .flock-row.open .recruit-list { display: block; }
+  .recruit-item {
+    display: flex; align-items: center; gap: 10px; padding: 5px 0;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .recruit-item .rdate { font-family: var(--font-mono); }
+  .recruit-item .rwallet { font-family: var(--font-mono); color: var(--text); }
+  .recruit-item a { color: var(--iri-4); text-decoration: none; font-family: var(--font-ui); font-size: 0.76rem; }
+  .recruit-item a:hover { text-decoration: underline; }
+  .under-review {
+    color: var(--iri-3);
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--iri-3);
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+
+  .empty-state { color: var(--muted); font-size: 0.85rem; padding: 18px 4px; text-align: center; }
+  .error { color: var(--iri-3); font-size: 0.85rem; font-family: var(--font-ui); }
+  footer { color: var(--muted); font-size: 0.78rem; text-align: center; margin-top: 28px; font-family: var(--font-ui); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 64 32" aria-hidden="true">
+        <circle class="mark-dot" cx="8" cy="16" r="7"/>
+        <path class="mark-chev" d="M24 4 L48 16 L24 28" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="wordmark">level941</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">board</a>
+      <a href="observatory.html">observatory</a>
+      <a href="flock.html" class="active">flock</a>
+    </nav>
+  </header>
+
+  <p class="page-sub">who's actually bringing new pigeons in. attributed, not self-reported — <a href="#how">how this works ↓</a>.</p>
+
+  <div class="caption">recruiting is counted, not claimed: the funder must already hold, the recruit's tokens can't come directly from them, and it has to stick for 3 days. no reward is attached to this yet — it's here to be watched.</div>
+
+  <div id="loadError" class="error" style="display:none;"></div>
+
+  <div class="totals" id="totals">
+    <div class="tile"><div class="label">confirmed recruits</div><div class="value" id="val-recruits">—</div></div>
+    <div class="tile"><div class="label">active recruiters</div><div class="value" id="val-recruiters">—</div></div>
+    <div class="tile"><div class="label">pending evaluation</div><div class="value" id="val-pending">—</div></div>
+    <div class="tile"><div class="label">tracking since</div><div class="value" id="val-since">—</div></div>
+  </div>
+
+  <section>
+    <h2>the flock board</h2>
+    <p class="section-sub">tap a row for the evidence trail. every recruit links to the on-chain funding transaction.</p>
+    <div class="flock-list" id="flockList"></div>
+  </section>
+
+  <section id="how">
+    <h2>how attribution works</h2>
+    <p class="section-sub" style="margin-bottom:0;">
+      for each new qualifying wallet, we find who paid for its very first transaction (the fee payer of a fresh
+      wallet's oldest signature — a wallet with 0 SOL can't submit its own first transaction). that funder only
+      gets credit if: they were already a qualifying holder before funding the new wallet; the new wallet's
+      tokens did not come directly from the funder (splitting your own bag is not recruiting); and the new
+      wallet sustains qualification for 3 days, not a snapshot-and-dump. funders with an unusual cluster of
+      same-day recruits are flagged "under review" rather than hidden — this board exists to be watched before
+      anything is ever paid out.
+    </p>
+  </section>
+
+  <footer id="footerNote">—</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var POLL_MS = 120000;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function fmtNum(n) {
+    return Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  }
+
+  function renderTotals(data) {
+    document.getElementById('val-recruits').textContent = fmtNum(data.totals.totalConfirmedRecruits);
+    document.getElementById('val-recruiters').textContent = fmtNum(data.totals.totalRecruiters);
+    document.getElementById('val-pending').textContent = fmtNum(data.totals.pendingEvaluation);
+    document.getElementById('val-since').textContent = data.trackingSince || '—';
+  }
+
+  function renderList(data) {
+    var wrap = document.getElementById('flockList');
+    wrap.innerHTML = '';
+    var entries = data.entries || [];
+    if (entries.length === 0) {
+      wrap.appendChild(el('div', 'empty-state', 'no confirmed recruits yet — tracking started ' + (data.trackingSince || 'recently') + '. check back as new holders sustain their streak.'));
+      return;
+    }
+    entries.forEach(function (entry) {
+      var row = el('div', 'flock-row');
+      if (entry.rank === 1) row.dataset.crown = '1';
+      else if (entry.rank === 2 || entry.rank === 3) {
+        row.dataset.crown = String(entry.rank);
+        row.style.setProperty('--stagger', entry.rank === 2 ? '0' : '1.6');
+      } else if (entry.rank <= 10) row.dataset.crown = 'top10';
+
+      var head = el('div', 'flock-head');
+      head.appendChild(el('div', 'rank-num', String(entry.rank)));
+      head.appendChild(el('div', 'recruiter', entry.recruiter));
+      var hasFlag = entry.recruits.some(function (r) { return r.underReview; });
+      if (hasFlag) head.appendChild(el('span', 'under-review', 'under review'));
+      head.appendChild(el('div', 'count', entry.recruitCount + (entry.recruitCount === 1 ? ' recruit' : ' recruits')));
+      head.appendChild(el('div', 'caret', '▸'));
+      head.addEventListener('click', function () { row.classList.toggle('open'); });
+      row.appendChild(head);
+
+      var list = el('div', 'recruit-list');
+      entry.recruits.forEach(function (r) {
+        var item = el('div', 'recruit-item');
+        item.appendChild(el('span', 'rdate', r.firstQualifiedDate));
+        item.appendChild(el('span', 'rwallet', r.wallet));
+        if (r.underReview) item.appendChild(el('span', 'under-review', 'review'));
+        var link = document.createElement('a');
+        link.href = r.fundingTxSolscanUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'funding tx ↗';
+        item.appendChild(link);
+        list.appendChild(item);
+      });
+      row.appendChild(list);
+      wrap.appendChild(row);
+    });
+  }
+
+  function poll() {
+    fetch('flock.json', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        document.getElementById('loadError').style.display = 'none';
+        renderTotals(data);
+        renderList(data);
+        document.getElementById('footerNote').textContent =
+          'generated ' + (data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—') + '. recompute it yourself from public chain data.';
+      })
+      .catch(function (e) {
+        var err = document.getElementById('loadError');
+        err.style.display = 'block';
+        err.textContent = 'Could not load flock.json (' + e.message + '). Run "npm run flock-scan && npm run publish-flock" and serve this directory over http, not file://.';
+      });
+  }
+
+  poll();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>

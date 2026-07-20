@@ -159,9 +159,16 @@ async function sweepToken(
   t: WalletToken
 ): Promise<void> {
   const already = sentSetForMint(cfg, date, t.mint);
-  const allocations = computeAllocations(t.amountRaw, top, 'streak', cfg.streakCap, cfg.streakExponent).filter(
-    (a) => !already.has(a.wallet)
-  );
+  // Renormalize against ONLY the wallets not yet paid today, not the full
+  // top list. If an earlier attempt today already paid some of them (e.g.
+  // a batch that halted partway through), computeAllocations must split the
+  // CURRENT remaining balance across exactly who's left -- splitting it
+  // against the full list's weight (the old behavior) systematically
+  // under-allocates the remainder, since t.amountRaw here is already
+  // whatever is left, not the original pool. This is what makes a same-day
+  // retry actually finish the job instead of asymptotically trickling out.
+  const unpaid = top.filter((h) => !already.has(h.wallet));
+  const allocations = computeAllocations(t.amountRaw, unpaid, 'streak', cfg.streakCap, cfg.streakExponent);
   if (allocations.length === 0) {
     console.log(`${t.mint}: already swept today. Skipping.`);
     return;
@@ -174,16 +181,31 @@ async function sweepToken(
   };
   console.log(`Sweeping ${fmt(rawToHuman(t.amountRaw, t.decimals))} of ${t.mint} to ${allocations.length} wallets.`);
   const { sent, failed } = await sendBatch(cfg, ctx, date, allocations, 'sweep', undefined, new PublicKey(t.mint));
-  const state = loadState(cfg);
-  if (state[t.mint]) {
-    state[t.mint]!.sweptDates.push(date);
-    saveState(cfg, state);
+
+  // Only record this mint as swept-today if something actually landed.
+  // Previously this pushed unconditionally, so a batch that failed 100/100
+  // (e.g. the wallet ran out of SOL) still left a "sweptDates" entry
+  // claiming success -- misleading for anyone auditing the history later,
+  // even though nothing actually gates re-attempts off this field.
+  if (sent > 0) {
+    const state = loadState(cfg);
+    if (state[t.mint]) {
+      state[t.mint]!.sweptDates.push(date);
+      saveState(cfg, state);
+    }
   }
+
   notify('drop wallet: sweep complete', `${fmt(rawToHuman(t.amountRaw, t.decimals))} of ${t.mint.slice(0, 8)}... to ${sent} holders. failed: ${failed}.`);
-  await announce(
-    'sweep. the flock eats.',
-    `${fmt(rawToHuman(t.amountRaw, t.decimals))} of ${t.mint.slice(0, 4)}...${t.mint.slice(-4)} to the top ${sent} pigeons. size x days held. on chain now.`
-  );
+
+  // Never tell the public "to the top 0 pigeons" -- if nothing sent, there
+  // is nothing to announce. The failure is still visible via notify() above
+  // (private) and the halted-batch notification from sendBatch itself.
+  if (sent > 0) {
+    await announce(
+      'sweep. the flock eats.',
+      `${fmt(rawToHuman(t.amountRaw, t.decimals))} of ${t.mint.slice(0, 4)}...${t.mint.slice(-4)} to the top ${sent} pigeons. size x days held. on chain now.`
+    );
+  }
 }
 
 // Excess SOL above the fee reserve, split by weight across ALL qualifying

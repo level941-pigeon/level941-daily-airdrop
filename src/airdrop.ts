@@ -4,6 +4,7 @@ import * as readline from 'node:readline';
 import { execFileSync } from 'node:child_process';
 import {
   ComputeBudgetProgram,
+  LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
   sendAndConfirmTransaction,
@@ -342,7 +343,33 @@ export async function sendBatch(
   let failed = 0;
   const maxAttempts = 3;
 
+  // A new recipient can need a brand-new token account (rent ~0.002-0.0025
+  // SOL depending on the token program/extensions) plus a tx fee. Rather
+  // than estimate that up front, check the REAL balance periodically and
+  // halt before it ever crosses the reserve floor. This is what a 6-token
+  // sweep at the $1 floor blew straight through: 260 doomed simulation
+  // attempts in a row instead of one clean stop. Checked every 10 sends to
+  // bound the extra RPC calls; solReserve=0 (some flows never set it)
+  // disables the guard entirely rather than halting on a hair-trigger.
+  const SOL_GUARD_INTERVAL = 10;
+  const SOL_GUARD_BUFFER = 0.003;
+
   for (let i = 0; i < recipients.length; i++) {
+    if (cfg.solReserve > 0 && i % SOL_GUARD_INTERVAL === 0) {
+      const solBalanceHuman = (await cfg.connection.getBalance(cfg.keypair.publicKey)) / LAMPORTS_PER_SOL;
+      if (solBalanceHuman - SOL_GUARD_BUFFER < cfg.solReserve) {
+        const remaining = recipients.length - i;
+        console.log(
+          `SOL GUARD: balance ${solBalanceHuman.toFixed(5)} SOL is too close to the ${cfg.solReserve} reserve floor to safely continue. ` +
+            `Halting with ${remaining} of ${recipients.length} recipients unsent (not attempted, not failed). Top up SOL and rerun.`
+        );
+        notify(
+          'drop wallet: SOL guard halted a batch',
+          `${remaining} of ${recipients.length} ${type} sends skipped -- balance ${solBalanceHuman.toFixed(4)} SOL too low. Top up and rerun.`
+        );
+        break;
+      }
+    }
     const { wallet, amountRaw } = recipients[i]!;
     const owner = new PublicKey(wallet);
     const recipientAta = getAssociatedTokenAddressSync(mint, owner, true, ctx.programId);
