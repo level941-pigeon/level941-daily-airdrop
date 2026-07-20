@@ -3,21 +3,22 @@
 // and the poller -- its only credential is a read-only X API bearer token,
 // its only shared file convention is writing into docs/ like board.ts does.
 //
-// HONESTY NOTE: the API client functions in this file are written against
-// X API v2's documented endpoint shapes (search/recent, liking_users,
-// retweeted_by, users lookup) but have NOT been exercised against a live
-// X API account in this environment -- there is no X_API_BEARER_TOKEN
-// configured here. The scoring math they feed (flock-signal-scoring.ts) is
-// unit-tested and proven; the wire format below should be treated as
-// "correct per the docs, unverified in practice" until run for real.
-//
 // Cost model (docs.x.com/x-api/getting-started/pricing, fetched 2026-07-20):
 // posts $0.005/read, users $0.010/read, likes $0.001/read. The repost-read
 // rate is NOT separately published for retweeted_by; it's inferred here as
 // the $0.010 "users" rate since that endpoint returns full user objects.
 // That one constant is a guess, not a confirmed number -- verify it against
 // a real billing statement before trusting the cost ledger's precision.
+//
+// Two independent safety nets, both checked BEFORE spending/calling:
+//   1. monthlyCapUsd -- a running dollar estimate, resets each billing month.
+//   2. maxApiCallsPerRun -- a hard ceiling on raw HTTP calls in ONE run,
+//      completely separate from the dollar math, so a pagination bug or
+//      runaway loop hits a wall after N calls no matter how cheap each one
+//      looks on paper. See MAX_DISCOVERY_PAGES below for the same idea
+//      applied specifically to the one real loop in this file.
 
+import 'dotenv/config';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import {
@@ -43,6 +44,8 @@ interface FlockSignalConfig {
   monthlyCapUsd: number;
   weeklyShortlistSize: number;
   searchQuery: string;
+  maxApiCallsPerRun: number;
+  deepDiveEnabled: boolean;
   dataDir: string;
   docsDir: string;
 }
@@ -60,6 +63,19 @@ function loadConfig(): FlockSignalConfig {
     monthlyCapUsd: Number(process.env.FLOCK_SIGNAL_MONTHLY_CAP_USD ?? '100'),
     weeklyShortlistSize: Number(process.env.FLOCK_SIGNAL_SHORTLIST_SIZE ?? '30'),
     searchQuery: process.env.FLOCK_SIGNAL_SEARCH_QUERY ?? '(@level941 OR #level941) -is:retweet',
+    // Hard ceiling on raw API calls for a single run, independent of the
+    // dollar cap above -- default covers full-scale normal use (a 30-post
+    // shortlist costs ~70 calls: discovery pages + 2 calls/post deep-dive)
+    // with real headroom, while still being a finite number a bug can't
+    // loop past.
+    maxApiCallsPerRun: Number(process.env.FLOCK_SIGNAL_MAX_API_CALLS_PER_RUN ?? '150'),
+    // OFF by default. A live test run confirmed liking_users/retweeted_by
+    // reject App-only bearer auth with a 403 ("Unsupported Authentication" --
+    // they require OAuth 1.0a or OAuth 2.0 user context). That OAuth flow is
+    // not being pursued right now, so deep-dive stays disabled and every
+    // candidate gets triage-only (raw-reach) scoring for a human to judge by
+    // hand. Flip to 'true' once user-context credentials exist.
+    deepDiveEnabled: (process.env.FLOCK_SIGNAL_DEEP_DIVE_ENABLED ?? 'false') === 'true',
     // Deliberately NOT data/ -- that directory is gitignored project-wide
     // ("never leaves this machine"). This state has to survive across
     // GitHub Actions runs, which get a fresh checkout every time with no
@@ -110,25 +126,59 @@ function saveLedger(cfg: FlockSignalConfig, ledger: UsageLedger): void {
   fs.writeFileSync(ledgerPath(cfg), JSON.stringify(ledger, null, 2) + '\n', 'utf8');
 }
 
-// Records spend AFTER a call succeeds and refuses to run anything that
-// would cross the cap BEFORE it happens -- the ledger is checked, not just
-// updated, so a capped-out month actually stops calling the API rather
-// than noticing after the fact.
-function chargeOrSkip(ledger: UsageLedger, cfg: FlockSignalConfig, estimateUsd: number, label: string): boolean {
-  if (ledger.spentUsd + estimateUsd > cfg.monthlyCapUsd) {
+// Reserves the WORST-CASE cost of a call before it's made, and refuses to
+// issue the call at all if that worst case would cross the cap -- checking
+// after the response came back is too late, the real API charge already
+// happened by then regardless of what our own ledger says. Call sites pass
+// the max possible resource count for the request (e.g. max_results=100),
+// then reconcileBudget() below true's it up to the actual count once the
+// response is in hand.
+function reserveBudget(ledger: UsageLedger, cfg: FlockSignalConfig, maxUsd: number, label: string): boolean {
+  if (ledger.spentUsd + maxUsd > cfg.monthlyCapUsd) {
     console.log(
-      `BUDGET GUARD: ${label} (~$${estimateUsd.toFixed(3)}) would cross the $${cfg.monthlyCapUsd} monthly cap ` +
-        `(spent so far: $${ledger.spentUsd.toFixed(3)}). Skipping.`
+      `BUDGET GUARD: ${label} (up to $${maxUsd.toFixed(3)}) could cross the $${cfg.monthlyCapUsd} monthly cap ` +
+        `(spent so far: $${ledger.spentUsd.toFixed(3)}). Skipping BEFORE calling -- no request sent.`
     );
     return false;
   }
-  ledger.spentUsd += estimateUsd;
+  ledger.spentUsd += maxUsd;
   return true;
 }
 
-// ---------- X API client (documented shape, untested live -- see header) ----------
+// Corrects the reservation down (or, if the API ever returned more than the
+// requested max_results, up) to the actual resource count once known.
+function reconcileBudget(ledger: UsageLedger, reservedUsd: number, actualUsd: number): void {
+  ledger.spentUsd += actualUsd - reservedUsd;
+}
 
-async function xApiGet<T>(cfg: FlockSignalConfig, urlPath: string, params: Record<string, string>): Promise<T> {
+// ---------- hard per-run call cap ----------
+// Separate from the dollar ledger on purpose: a bug that loops without ever
+// crossing the dollar cap (e.g. cheap calls in a tight loop) still gets
+// stopped here after a fixed number of real HTTP requests.
+
+export interface CallCounter {
+  calls: number;
+}
+
+function noteApiCall(cfg: FlockSignalConfig, counter: CallCounter, label: string): void {
+  counter.calls += 1;
+  if (counter.calls > cfg.maxApiCallsPerRun) {
+    throw new Error(
+      `HARD STOP: exceeded maxApiCallsPerRun (${cfg.maxApiCallsPerRun}) at call #${counter.calls} (${label}). ` +
+        `Aborting the run -- this is a safety ceiling independent of the dollar cap.`
+    );
+  }
+}
+
+// ---------- X API client ----------
+
+async function xApiGet<T>(
+  cfg: FlockSignalConfig,
+  counter: CallCounter,
+  urlPath: string,
+  params: Record<string, string>
+): Promise<T> {
+  noteApiCall(cfg, counter, urlPath);
   const url = new URL(`${X_API_BASE}${urlPath}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   const maxAttempts = 3;
@@ -197,12 +247,27 @@ function toEngagerSignal(u: XUser, engagedAt: string): EngagerSignal {
   };
 }
 
+// Defense in depth alongside the global call counter: this is the one real
+// loop in the file (X could in principle keep returning a next_token
+// forever), so it gets its own explicit, small bound too.
+const MAX_DISCOVERY_PAGES = 10;
+
 // Stage 1: discovery. Cheap -- public_metrics ride along with the base
 // post read, no extra cost beyond the $0.005/post charge.
-export async function discoverCandidates(cfg: FlockSignalConfig, ledger: UsageLedger): Promise<CandidatePost[]> {
+export async function discoverCandidates(
+  cfg: FlockSignalConfig,
+  ledger: UsageLedger,
+  counter: CallCounter
+): Promise<CandidatePost[]> {
   const out: CandidatePost[] = [];
   let nextToken: string | undefined;
+  let pageNum = 0;
   do {
+    pageNum += 1;
+    if (pageNum > MAX_DISCOVERY_PAGES) {
+      console.log(`Discovery: hit MAX_DISCOVERY_PAGES (${MAX_DISCOVERY_PAGES}), stopping pagination early.`);
+      break;
+    }
     const params: Record<string, string> = {
       query: cfg.searchQuery,
       max_results: '100',
@@ -212,14 +277,17 @@ export async function discoverCandidates(cfg: FlockSignalConfig, ledger: UsageLe
     };
     if (nextToken) params.next_token = nextToken;
 
+    const maxPageCostUsd = 100 * RATE_USD.postRead; // max_results is capped at 100
+    if (!reserveBudget(ledger, cfg, maxPageCostUsd, `discovery page (up to 100 posts)`)) break;
+
     const page = await xApiGet<{
       data?: XPost[];
       includes?: { users?: XUser[] };
       meta?: { next_token?: string };
-    }>(cfg, '/tweets/search/recent', params);
+    }>(cfg, counter, '/tweets/search/recent', params);
 
     const pageCount = page.data?.length ?? 0;
-    if (!chargeOrSkip(ledger, cfg, pageCount * RATE_USD.postRead, `discovery page (${pageCount} posts)`)) break;
+    reconcileBudget(ledger, maxPageCostUsd, pageCount * RATE_USD.postRead);
 
     const usersById = new Map((page.includes?.users ?? []).map((u) => [u.id, u]));
     for (const post of page.data ?? []) {
@@ -250,18 +318,21 @@ export async function discoverCandidates(cfg: FlockSignalConfig, ledger: UsageLe
 async function fetchEngagers(
   cfg: FlockSignalConfig,
   ledger: UsageLedger,
+  counter: CallCounter,
   postId: string,
   endpoint: 'liking_users' | 'retweeted_by',
   rate: number,
   engagedAtFallback: string
 ): Promise<EngagerSignal[]> {
   const label = `${endpoint} for ${postId}`;
-  const page = await xApiGet<{ data?: XUser[] }>(cfg, `/tweets/${postId}/${endpoint}`, {
+  const maxCallCostUsd = 100 * rate; // max_results is capped at 100
+  if (!reserveBudget(ledger, cfg, maxCallCostUsd, label)) return [];
+  const page = await xApiGet<{ data?: XUser[] }>(cfg, counter, `/tweets/${postId}/${endpoint}`, {
     max_results: '100',
     'user.fields': 'verified,created_at,profile_image_url,public_metrics',
   });
   const users = page.data ?? [];
-  if (!chargeOrSkip(ledger, cfg, users.length * rate, label)) return [];
+  reconcileBudget(ledger, maxCallCostUsd, users.length * rate);
   return users.map((u) => toEngagerSignal(u, engagedAtFallback));
 }
 
@@ -269,9 +340,22 @@ async function fetchEngagers(
 // expensive part and is individually budget-gated -- a capped-out month
 // stops mid-shortlist rather than blowing through the ceiling on the last
 // few entries.
-export async function deepDiveOne(cfg: FlockSignalConfig, ledger: UsageLedger, post: CandidatePost): Promise<ScoredEntry> {
-  const likers = await fetchEngagers(cfg, ledger, post.postId, 'liking_users', RATE_USD.likeRead, post.postedAt);
-  const reposters = await fetchEngagers(cfg, ledger, post.postId, 'retweeted_by', RATE_USD.repostRead, post.postedAt);
+export async function deepDiveOne(
+  cfg: FlockSignalConfig,
+  ledger: UsageLedger,
+  counter: CallCounter,
+  post: CandidatePost
+): Promise<ScoredEntry> {
+  const likers = await fetchEngagers(cfg, ledger, counter, post.postId, 'liking_users', RATE_USD.likeRead, post.postedAt);
+  const reposters = await fetchEngagers(
+    cfg,
+    ledger,
+    counter,
+    post.postId,
+    'retweeted_by',
+    RATE_USD.repostRead,
+    post.postedAt
+  );
   // Replies are posts (conversation_id search), scored as a Posts read;
   // resolving each replier's own verified status would add a Users read
   // per reply -- left out of v1 to keep the shortlist cost predictable.
@@ -295,32 +379,51 @@ export interface FlockSignalEntry extends CandidatePost {
 export async function runFlockSignalCrawl(): Promise<FlockSignalEntry[]> {
   const cfg = loadConfig();
   const ledger = loadLedger(cfg);
+  const counter: CallCounter = { calls: 0 };
 
-  const candidates = await discoverCandidates(cfg, ledger);
+  let candidates: CandidatePost[] = [];
+  try {
+    candidates = await discoverCandidates(cfg, ledger, counter);
+  } catch (e) {
+    console.log(`Discovery stopped: ${e instanceof Error ? e.message : String(e)}`);
+  }
   const withReach = candidates.map((c) => ({ ...c, rawReach: rawReachScore(c.rawMetrics) }));
   withReach.sort((a, b) => b.rawReach - a.rawReach);
 
-  const shortlist = withReach.slice(0, cfg.weeklyShortlistSize);
-  const restOfField = withReach.slice(cfg.weeklyShortlistSize);
-
   const results: FlockSignalEntry[] = [];
-  for (const post of shortlist) {
-    try {
-      const score = await deepDiveOne(cfg, ledger, post);
-      results.push({ ...post, score });
-    } catch (e) {
-      console.log(`Deep-dive failed for ${post.postId}: ${e instanceof Error ? e.message : String(e)}`);
+  let deepDivedCount = 0;
+
+  if (cfg.deepDiveEnabled) {
+    const shortlist = withReach.slice(0, cfg.weeklyShortlistSize);
+    const restOfField = withReach.slice(cfg.weeklyShortlistSize);
+    deepDivedCount = shortlist.length;
+    for (const post of shortlist) {
+      try {
+        const score = await deepDiveOne(cfg, ledger, counter, post);
+        results.push({ ...post, score });
+      } catch (e) {
+        console.log(`Deep-dive failed/stopped for ${post.postId}: ${e instanceof Error ? e.message : String(e)}`);
+        results.push({ ...post, score: scoreTriageOnly(post.rawMetrics) });
+      }
+      saveLedger(cfg, ledger); // persist after every entry, not just at the end
+    }
+    for (const post of restOfField) {
       results.push({ ...post, score: scoreTriageOnly(post.rawMetrics) });
     }
-    saveLedger(cfg, ledger); // persist after every entry, not just at the end
-  }
-  for (const post of restOfField) {
-    results.push({ ...post, score: scoreTriageOnly(post.rawMetrics) });
+  } else {
+    // Triage-only mode: no liking_users/retweeted_by calls at all, so no
+    // budget is spent past discovery. Every candidate is ranked by real raw
+    // reach for a human to judge by hand -- see deepDiveEnabled's comment.
+    for (const post of withReach) {
+      results.push({ ...post, score: scoreTriageOnly(post.rawMetrics) });
+    }
   }
 
   saveLedger(cfg, ledger);
   console.log(
-    `Flock Signal crawl: ${candidates.length} candidates, ${shortlist.length} deep-dived, ` +
+    `Flock Signal crawl: ${candidates.length} candidates, ` +
+      `${cfg.deepDiveEnabled ? `${deepDivedCount} deep-dived` : 'triage-only (deep-dive disabled)'}, ` +
+      `${counter.calls} of ${cfg.maxApiCallsPerRun} API calls used, ` +
       `$${ledger.spentUsd.toFixed(3)} of $${cfg.monthlyCapUsd} monthly cap spent.`
   );
   return results;
@@ -432,6 +535,18 @@ function statusLabelsFor(
   return labels;
 }
 
+// Triage-only mode (deep-dive disabled): ranking is honestly raw-reach, not
+// verified, so it gets its own labels rather than borrowing the verified
+// ones above -- "This Week's Leader" or "High Signal" would imply a
+// verification pass that never happened.
+function statusLabelsForTriage(rank: number, shortlistSize: number, rawReachPercentile: number): string[] {
+  const labels: string[] = [];
+  if (rank === 1) labels.push('Top Raw Reach');
+  if (rank <= shortlistSize) labels.push('Human Review Finalist');
+  else if (rawReachPercentile >= 0.9) labels.push('Flagged Viral');
+  return labels;
+}
+
 export async function publishFlockSignal(results: FlockSignalEntry[]): Promise<void> {
   const cfg = loadConfig();
   const now = new Date();
@@ -470,9 +585,20 @@ export async function publishFlockSignal(results: FlockSignalEntry[]): Promise<v
       statusLabels: statusLabelsFor(r, rank, deepDived.length, reachRank.get(r.postId) ?? 0, momentum),
     });
   });
-  triageOnly.forEach((r) => {
+  triageOnly.forEach((r, i) => {
+    const percentile = reachRank.get(r.postId) ?? 0;
+    // When nothing was verified-ranked this run (deep-dive disabled, the
+    // current default), triage IS the board -- rank all of it by raw reach
+    // so there's an honest order for a human to review. If deep-dive output
+    // exists alongside it, triage entries stay unranked (null) so a
+    // farmable raw-reach number never outranks a verified one.
+    const rank = deepDived.length === 0 ? i + 1 : null;
+    const statusLabels =
+      rank !== null
+        ? statusLabelsForTriage(rank, cfg.weeklyShortlistSize, percentile)
+        : statusLabelsFor(r, null, deepDived.length, percentile, false);
     entries.push({
-      rank: null,
+      rank,
       postId: r.postId,
       postUrl: r.postUrl,
       authorHandle: r.authorHandle,
@@ -484,33 +610,25 @@ export async function publishFlockSignal(results: FlockSignalEntry[]): Promise<v
       confidence: r.score.confidence,
       flags: r.score.flags,
       deepDivePerformed: false,
-      statusLabels: statusLabelsFor(r, null, deepDived.length, reachRank.get(r.postId) ?? 0, false),
+      statusLabels,
     });
   });
 
   saveWeekHistory(cfg, history);
 
-  // Hall of Fame accumulates from the board's OWN prior published state --
-  // no separate private archive, so the history is exactly as recomputable
-  // and auditable as everything else on this site.
+  // Hall of Fame is human-picks-only, on purpose -- it is NEVER auto-populated
+  // from rank #1 here. In triage-only mode rank #1 is just the highest raw
+  // reach, unverified and farmable; auto-inducting it would be exactly the
+  // kind of unearned status this site's anti-farm design exists to prevent.
+  // This just carries the prior file's Hall of Fame forward untouched; the
+  // only way an entry joins it is you hand-editing docs/flock-signal.json
+  // with your picked winner.
   const outFile = path.join(cfg.docsDir, 'flock-signal.json');
   let hallOfFame: HallOfFameEntry[] = [];
   if (fs.existsSync(outFile)) {
     try {
       const prior = JSON.parse(fs.readFileSync(outFile, 'utf8')) as FlockSignalData;
       hallOfFame = prior.hallOfFame ?? [];
-      if (prior.weekOf && prior.weekOf !== weekOf) {
-        const priorLeader = prior.entries.find((e) => e.rank === 1);
-        if (priorLeader && !hallOfFame.some((h) => h.postId === priorLeader.postId)) {
-          hallOfFame.push({
-            weekOf: prior.weekOf,
-            postId: priorLeader.postId,
-            postUrl: priorLeader.postUrl,
-            authorHandle: priorLeader.authorHandle,
-            verifiedWeightedScore: priorLeader.verifiedWeightedScore,
-          });
-        }
-      }
     } catch {
       /* no valid prior file, start fresh */
     }

@@ -206,7 +206,7 @@ export function scoreTriageOnly(raw: RawCounts): ScoredEntry {
     verifiedBreakdown: { likes: 0, reposts: 0, replies: 0 },
     unverifiedBreakdown: { likes: raw.likes, reposts: raw.reposts, replies: raw.replies },
     confidence: 'low',
-    flags: ['not deep-dived this week (outside the budget-capped shortlist) -- ranked by raw reach only'],
+    flags: ['not deep-dived -- verified engagement unknown, ranked by raw reach only'],
     deepDivePerformed: false,
   };
 }

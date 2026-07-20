@@ -191,6 +191,7 @@
   .badge.viral { border: 1px solid var(--iri-3); color: var(--iri-3); }
   .badge.momentum { border: 1px solid var(--iri-2); color: var(--iri-2); }
   .badge.hof { border: 1px solid var(--muted); color: var(--muted); }
+  .badge.top-reach { border: 1px solid var(--iri-1); color: var(--iri-1); font-weight: 700; }
 
   .embed-wrap { margin: 10px 0; max-width: 100%; overflow: hidden; }
   .embed-fallback {
@@ -241,6 +242,8 @@
 
   <div class="caption">the machine finds, scores, ranks, and flags. it never pays anyone. a human confirms every drop, always.</div>
 
+  <div class="caption">triage mode: ranked by raw reach only right now, no verified-engagement weighting yet — that needs an OAuth user-context credential that isn't set up. these numbers are real but unverified and farmable. the human host makes the actual call.</div>
+
   <div id="loadError" class="error" style="display:none;"></div>
 
   <div class="countdown-block">
@@ -250,20 +253,20 @@
 
   <div class="totals">
     <div class="tile"><div class="label">entries this week</div><div class="value" id="val-entries">—</div></div>
-    <div class="tile"><div class="label">finalists</div><div class="value" id="val-finalists">—</div></div>
+    <div class="tile"><div class="label">shortlisted for review</div><div class="value" id="val-finalists">—</div></div>
     <div class="tile"><div class="label">unique creators</div><div class="value" id="val-creators">—</div></div>
     <div class="tile"><div class="label">week of</div><div class="value" id="val-week">—</div></div>
   </div>
 
   <section>
-    <h2>this week's finalists</h2>
-    <p class="section-sub">verified-weighted score is the main ranking. every finalist got the full deep-dive.</p>
+    <h2>ranked by raw reach</h2>
+    <p class="section-sub">real engagement counts, unverified. sorted for your review, not a verified verdict — you pick the winner by hand.</p>
     <div id="finalistsList"></div>
   </section>
 
   <section>
-    <h2>flagged for raw reach</h2>
-    <p class="section-sub">big numbers, not yet deep-verified this week — surfaced honestly, not hidden.</p>
+    <h2>outside the ranked list</h2>
+    <p class="section-sub">tracked but not yet ranked this week — surfaced honestly, not hidden.</p>
     <div id="rawReachList"></div>
   </section>
 
@@ -338,6 +341,7 @@
   function badgeFor(label) {
     var cls = {
       "This Week's Leader": 'leader',
+      'Top Raw Reach': 'top-reach',
       'High Signal': 'high-signal',
       'Human Review Finalist': 'finalist',
       'Flagged Viral': 'viral',
@@ -362,14 +366,25 @@
     card.appendChild(embedBlock(entry.postUrl));
 
     var grid = el('div', 'score-grid');
-    var fields = [
-      ['verified score', fmtNum(entry.verifiedWeightedScore), true],
-      ['raw reach', fmtNum(entry.rawReach), false],
-      ['verified likes', fmtNum(entry.verifiedBreakdown.likes), false],
-      ['verified reposts', fmtNum(entry.verifiedBreakdown.reposts), false],
-      ['unverified likes', fmtNum(entry.unverifiedBreakdown.likes), false],
-      ['unverified reposts', fmtNum(entry.unverifiedBreakdown.reposts), false],
-    ];
+    // Triage-only entries (the current default -- deep-dive needs an OAuth
+    // user-context credential this site doesn't have yet) never earned a
+    // verified score, so showing "verified score: 0" as the hero stat would
+    // read as broken rather than honest. Raw reach is the real number here.
+    var fields = entry.deepDivePerformed
+      ? [
+          ['verified score', fmtNum(entry.verifiedWeightedScore), true],
+          ['raw reach', fmtNum(entry.rawReach), false],
+          ['verified likes', fmtNum(entry.verifiedBreakdown.likes), false],
+          ['verified reposts', fmtNum(entry.verifiedBreakdown.reposts), false],
+          ['unverified likes', fmtNum(entry.unverifiedBreakdown.likes), false],
+          ['unverified reposts', fmtNum(entry.unverifiedBreakdown.reposts), false],
+        ]
+      : [
+          ['raw reach', fmtNum(entry.rawReach), true],
+          ['likes', fmtNum(entry.unverifiedBreakdown.likes), false],
+          ['reposts', fmtNum(entry.unverifiedBreakdown.reposts), false],
+          ['replies', fmtNum(entry.unverifiedBreakdown.replies), false],
+        ];
     fields.forEach(function (f) {
       var wrap = el('div');
       wrap.appendChild(el('div', 'k', f[0]));
@@ -378,7 +393,11 @@
     });
     card.appendChild(grid);
 
-    card.appendChild(el('div', 'confidence ' + entry.confidence, entry.confidence + ' confidence'));
+    if (entry.deepDivePerformed) {
+      card.appendChild(el('div', 'confidence ' + entry.confidence, entry.confidence + ' confidence'));
+    } else {
+      card.appendChild(el('div', 'confidence low', 'unverified — raw reach only'));
+    }
 
     if (entry.flags && entry.flags.length > 0) {
       var flagsWrap = el('div', 'flags');
@@ -389,28 +408,40 @@
     return card;
   }
 
+  var RANKED_DISPLAY_CAP = 25;
+
   function render(data) {
+    var entries = data.entries || [];
+    var ranked = entries.filter(function (e) { return e.rank !== null; });
+    var finalistCount = entries.filter(function (e) {
+      return (e.statusLabels || []).indexOf('Human Review Finalist') !== -1;
+    }).length;
+
     document.getElementById('val-entries').textContent = fmtNum(data.totals.totalEntries);
-    document.getElementById('val-finalists').textContent = fmtNum(data.totals.deepDivedCount);
+    document.getElementById('val-finalists').textContent = fmtNum(finalistCount);
     document.getElementById('val-creators').textContent = fmtNum(data.totals.uniqueCreators);
     document.getElementById('val-week').textContent = data.weekOf;
 
     tickCountdown(data.nextReveal);
 
-    var finalists = (data.entries || []).filter(function (e) { return e.deepDivePerformed; });
     var finalistsWrap = document.getElementById('finalistsList');
     finalistsWrap.innerHTML = '';
-    if (finalists.length === 0) {
-      finalistsWrap.appendChild(el('div', 'empty-state', 'no finalists yet this week — check back as entries come in.'));
+    if (ranked.length === 0) {
+      finalistsWrap.appendChild(el('div', 'empty-state', 'nothing ranked yet this week — check back as entries come in.'));
     } else {
-      finalists.forEach(function (e) { finalistsWrap.appendChild(renderFinalistCard(e)); });
+      ranked.slice(0, RANKED_DISPLAY_CAP).forEach(function (e) { finalistsWrap.appendChild(renderFinalistCard(e)); });
+      if (ranked.length > RANKED_DISPLAY_CAP) {
+        finalistsWrap.appendChild(
+          el('div', 'section-sub', '+ ' + fmtNum(ranked.length - RANKED_DISPLAY_CAP) + ' more tracked in the full dataset, ranked by raw reach.')
+        );
+      }
     }
 
-    var rawReach = (data.entries || []).filter(function (e) { return !e.deepDivePerformed; }).slice(0, 20);
+    var rawReach = entries.filter(function (e) { return e.rank === null; }).slice(0, 20);
     var rawWrap = document.getElementById('rawReachList');
     rawWrap.innerHTML = '';
     if (rawReach.length === 0) {
-      rawWrap.appendChild(el('div', 'empty-state', 'nothing outside the finalist shortlist right now.'));
+      rawWrap.appendChild(el('div', 'empty-state', 'nothing outside the ranked list right now.'));
     } else {
       rawReach.forEach(function (e) { rawWrap.appendChild(renderFinalistCard(e)); });
     }
