@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T00:15:35.680Z",
+  "generatedAt": "2026-07-20T00:16:52.081Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -325,15 +325,6 @@
   ],
   "foreignTokens": [
     {
-      "mint": "So11111111111111111111111111111111111111112",
-      "amountTokens": "0.000000048",
-      "valueUsd": 1.61377,
-      "status": "ready",
-      "reason": "cleared, worth ~$1.61",
-      "coolingSecondsRemaining": 0,
-      "solscanUrl": "https://solscan.io/token/So11111111111111111111111111111111111111112"
-    },
-    {
       "mint": "9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump",
       "amountTokens": "0.00005",
       "valueUsd": 3.233611,
@@ -341,15 +332,6 @@
       "reason": "cleared, worth ~$3.23",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump"
-    },
-    {
-      "mint": "Aq5dLtgrWDeHdJgRi4ka4wV2L8v1ioTtqFy8L9LQpump",
-      "amountTokens": "517259.178695",
-      "valueUsd": 0.80766,
-      "status": "pending-value",
-      "reason": "realizable value $0.81 below $1 floor",
-      "coolingSecondsRemaining": 0,
-      "solscanUrl": "https://solscan.io/token/Aq5dLtgrWDeHdJgRi4ka4wV2L8v1ioTtqFy8L9LQpump"
     },
     {
       "mint": "4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump",
@@ -366,7 +348,7 @@
       "valueUsd": null,
       "status": "cooling",
       "reason": "cooling window, 14h remaining",
-      "coolingSecondsRemaining": 48738,
+      "coolingSecondsRemaining": 48661,
       "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
     },
     {
@@ -395,19 +377,10 @@
       "reason": "no sellable quote yet, retrying next run",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
-    },
-    {
-      "mint": "gsoZaYPVioFi9GRaehCnvNqUSNWYNZNVKT9oyoJpump",
-      "amountTokens": "323010.673029",
-      "valueUsd": 14.708845,
-      "status": "ready",
-      "reason": "cleared, worth ~$14.71",
-      "coolingSecondsRemaining": 0,
-      "solscanUrl": "https://solscan.io/token/gsoZaYPVioFi9GRaehCnvNqUSNWYNZNVKT9oyoJpump"
     }
   ],
   "holderCount": 1039,
-  "solBalance": 0.002008776,
+  "solBalance": 0.158651664,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
