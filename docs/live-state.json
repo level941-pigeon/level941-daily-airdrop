@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T13:40:13.814Z",
+  "generatedAt": "2026-07-21T13:41:30.248Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -345,44 +345,44 @@
     {
       "mint": "9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1",
       "amountTokens": "166042.337933",
-      "valueUsd": null,
-      "status": "pending-value",
-      "reason": "no sellable quote yet, retrying next run",
+      "valueUsd": 6.499589,
+      "status": "ready",
+      "reason": "cleared, worth ~$6.50",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/9RP9HYrQjeRj9fZJX2auZGepj8cqYWJFeQHHEdAUdEx1"
     },
     {
       "mint": "J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump",
       "amountTokens": "11009.471926",
-      "valueUsd": 1.768563,
+      "valueUsd": 1.386784,
       "status": "ready",
-      "reason": "cleared, worth ~$1.77",
+      "reason": "cleared, worth ~$1.39",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump"
     },
     {
       "mint": "4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump",
       "amountTokens": "1555522.589997",
-      "valueUsd": 3.852505,
+      "valueUsd": 3.863204,
       "status": "ready",
-      "reason": "cleared, worth ~$3.85",
+      "reason": "cleared, worth ~$3.86",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump"
     },
     {
       "mint": "A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump",
       "amountTokens": "100492447.15929",
-      "valueUsd": 235.2775,
+      "valueUsd": 239.516256,
       "status": "ready",
-      "reason": "cleared, worth ~$235.28",
+      "reason": "cleared, worth ~$239.52",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
     }
   ],
-  "holderCount": 1031,
+  "holderCount": 1032,
   "solBalance": 0.158651664,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
-  "next941": "2026-07-21T13:41:00.000Z"
+  "next941": "2026-07-22T13:41:00.000Z"
 }
