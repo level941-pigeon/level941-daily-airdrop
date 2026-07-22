@@ -17,6 +17,35 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+// Copy law: "backed by / controlled by / run by [an AI]" overclaims agency
+// this project doesn't have and isn't true -- a human approves every
+// public post through this exact queue. "Built with [an AI]" is true and
+// explicitly exempt. Proximity-based (same sentence-ish window), not a
+// whole-document scan, so an unrelated use of "run by" elsewhere in a
+// draft doesn't false-positive.
+const AI_NAMES = ['claude', 'gpt', 'chatgpt', 'anthropic', 'openai'];
+const BANNED_AGENCY_PHRASES = ['backed by', 'controlled by', 'run by'];
+const EXEMPT_PHRASE = 'built with';
+
+function checkCopyLaw(text: string): string[] {
+  const lower = text.toLowerCase();
+  if (!AI_NAMES.some((n) => lower.includes(n))) return [];
+  const violations: string[] = [];
+  for (const phrase of BANNED_AGENCY_PHRASES) {
+    let idx = lower.indexOf(phrase);
+    while (idx !== -1) {
+      const windowStart = Math.max(0, idx - 40);
+      const windowEnd = Math.min(lower.length, idx + phrase.length + 40);
+      const window = lower.slice(windowStart, windowEnd);
+      if (AI_NAMES.some((n) => window.includes(n)) && !window.includes(EXEMPT_PHRASE)) {
+        violations.push(`copy law: "${phrase}" adjacent to an AI name -- use "built with" instead`);
+      }
+      idx = lower.indexOf(phrase, idx + 1);
+    }
+  }
+  return violations;
+}
+
 const PROFIT_GUARANTEE_PATTERNS = [
   'guaranteed',
   'guarantee',
@@ -135,6 +164,7 @@ export function lintDraft(text: string): string[] {
   if (/@[a-zA-Z0-9_]{2,}/.test(text)) {
     violations.push('contains an @-mention -- review for real-world identity reference before approving');
   }
+  violations.push(...checkCopyLaw(text));
 
   return [...new Set(violations)];
 }
