@@ -29,10 +29,13 @@ const PROFIT_GUARANTEE_PATTERNS = [
   'moon',
   'to the moon',
   'not financial advice',
-  'nfa',
-  'roi',
   'profit',
 ];
+// Short abbreviations that collide with ordinary words as a substring --
+// "nfa" sits inside "unfarmable" and "confabulation", "roi" sits inside
+// "heroin". Exact-word-only, same fix as content-denylist.ts's coon/spic
+// tier and for the same reason.
+const PROFIT_GUARANTEE_WORD_PATTERNS = ['nfa', 'roi'];
 
 function envKeyNames(): string[] {
   const envPath = path.join(ROOT, '.env');
@@ -58,6 +61,49 @@ function envSecretValues(): string[] {
   return names.map((n) => process.env[n]).filter((v): v is string => !!v && v.length > 4);
 }
 
+// Flight Orders-only additions. "Angles only, forever" is the whole point
+// of that post type -- a price call or a "post this exactly" instruction
+// is precisely what turns an angle into either financial advice or a
+// copy-paste amplification vector, so these hard-fail there specifically
+// rather than folding into the base linter every post type shares.
+const PRICE_PREDICTION_PATTERNS = [
+  'price target',
+  'will hit',
+  'will reach',
+  'will pump',
+  'will moon',
+  'going to $',
+  'target of $',
+  'expect it to',
+  'should hit',
+  'predict',
+  'prediction',
+];
+const VERBATIM_INSTRUCTION_PATTERNS = [
+  'post this exactly',
+  'post exactly',
+  'copy paste',
+  'copy-paste',
+  'verbatim',
+  'word for word',
+  'use this exact text',
+  'post as-is',
+  'post as is',
+];
+
+export function lintFlightOrders(text: string): string[] {
+  const violations = lintDraft(text);
+  const lower = text.toLowerCase();
+  for (const p of PRICE_PREDICTION_PATTERNS) {
+    if (lower.includes(p)) violations.push(`contains price/prediction language: "${p}"`);
+  }
+  if (/\$\s?\d/.test(text)) violations.push('contains a price-looking dollar figure');
+  for (const p of VERBATIM_INSTRUCTION_PATTERNS) {
+    if (lower.includes(p)) violations.push(`contains a verbatim-copy instruction: "${p}"`);
+  }
+  return [...new Set(violations)];
+}
+
 export function lintDraft(text: string): string[] {
   const violations: string[] = [];
   const lower = text.toLowerCase();
@@ -81,6 +127,10 @@ export function lintDraft(text: string): string[] {
   }
   for (const p of PROFIT_GUARANTEE_PATTERNS) {
     if (lower.includes(p)) violations.push(`contains profit/guarantee language: "${p}"`);
+  }
+  const words = new Set(lower.split(/[^a-z0-9]+/).filter(Boolean));
+  for (const p of PROFIT_GUARANTEE_WORD_PATTERNS) {
+    if (words.has(p)) violations.push(`contains profit/guarantee language: "${p}"`);
   }
   if (/@[a-zA-Z0-9_]{2,}/.test(text)) {
     violations.push('contains an @-mention -- review for real-world identity reference before approving');

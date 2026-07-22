@@ -16,6 +16,7 @@ import { execFileSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { autoDraftWorkflow } from './breadbox.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MARKER = path.join(ROOT, 'data', 'logs', 'send-auto-last-success.txt');
@@ -69,6 +70,24 @@ function releaseLock(): void {
   }
 }
 
+// Auto-draft is best-effort and never allowed to affect the run it's
+// reporting on -- any failure here is caught and logged, not thrown, so a
+// broken draft can never make a real send-auto run look like it failed.
+function draftPostRunEvent(succeeded: boolean, reason: string): void {
+  try {
+    autoDraftWorkflow(
+      succeeded ? 'shipped.' : 'building.',
+      "today's run",
+      succeeded
+        ? `The scheduled daily run completed (${reason}).`
+        : `The scheduled daily run failed and will retry on the next trigger (${reason}).`,
+      `data/logs/auto.log, ${new Date().toISOString()}`
+    );
+  } catch (e) {
+    console.log(`scheduler-guard: auto-draft failed, not fatal to the run: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
 function runSendAuto(reason: string): void {
   console.log(`scheduler-guard: ${new Date().toISOString()} running send-auto (${reason})`);
   try {
@@ -76,11 +95,13 @@ function runSendAuto(reason: string): void {
     fs.mkdirSync(path.dirname(MARKER), { recursive: true });
     fs.writeFileSync(MARKER, `${todayLocal()} ${new Date().toISOString()} (${reason})\n`);
     console.log('scheduler-guard: send-auto completed, marker written.');
+    draftPostRunEvent(true, reason);
   } catch (e) {
     console.log(
       `scheduler-guard: send-auto FAILED, marker NOT written, next trigger will retry. ${e instanceof Error ? e.message : String(e)}`
     );
     process.exitCode = 1;
+    draftPostRunEvent(false, reason);
   }
 }
 
