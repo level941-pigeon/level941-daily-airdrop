@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-07-22T23:03:14.615Z",
+  "entries": [
+    {
+      "id": "1784756707289",
+      "postType": "workflow",
+      "status": "shipped.",
+      "title": "flock signal spend cap",
+      "body": "The meme-contest crawler had no hard ceiling on API spend. It now stops itself at a fixed monthly cap.",
+      "evidenceLink": "config change, local .env",
+      "fact": null,
+      "angle": null,
+      "make": null,
+      "clock": null,
+      "postedAt": "2026-07-22T22:57:36.353Z"
+    },
+    {
+      "id": "1784756707020",
+      "postType": "workflow",
+      "status": "testing.",
+      "title": "sweep content screen",
+      "body": "The box was auto-forwarding whatever landed in it without checking what a token was named. New screen checks token names before anything gets swept out, and we went back through recent history to lock down what the old screen missed.",
+      "evidenceLink": "commit 2c9193d2",
+      "fact": null,
+      "angle": null,
+      "make": null,
+      "clock": null,
+      "postedAt": "2026-07-22T22:57:35.713Z"
+    },
+    {
+      "id": "1784756706746",
+      "postType": "workflow",
+      "status": "building.",
+      "title": "9:41 run reliability",
+      "body": "Today's scheduled run silently did not fire -- root cause: the scheduler only ran while a desktop session was active. New watchdog now checks in at 9:55 and speaks up if a run or an update setting looks wrong.",
+      "evidenceLink": "commit 520df2f2",
+      "fact": null,
+      "angle": null,
+      "make": null,
+      "clock": null,
+      "postedAt": "2026-07-22T22:57:34.979Z"
+    }
+  ]
+}

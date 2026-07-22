@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>level941 — breadbox</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Ccircle cx='8' cy='16' r='7' fill='%237c5cff'/%3E%3Cpath d='M24 4 L48 16 L24 28' stroke='%23e7e9ea' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16181b; --panel: #1e2124; --panel-2: #262a2e; --border: #34393e;
+    --text: #e7e9ea; --muted: #8b9096;
+    --iri-1: #00d9a3; --iri-2: #7c5cff; --iri-3: #ff5ec4; --iri-4: #4dc9ff;
+    --iridescent: linear-gradient(115deg, var(--iri-1) 0%, var(--iri-2) 30%, var(--iri-3) 60%, var(--iri-4) 85%, var(--iri-1) 100%);
+    --workflow: #f2a91c; --flight: #2ba8e0;
+    --font-display: "Unbounded", "Fraunces", Georgia, serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-ui); line-height: 1.5; padding: 24px 16px 72px; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  a { color: inherit; }
+  a:focus-visible { outline: 2px solid var(--iri-4); outline-offset: 2px; }
+
+  .site-header { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 22px; border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .mark { width: 34px; height: 17px; flex-shrink: 0; }
+  .mark-dot { fill: var(--iri-2); }
+  .mark-chev { stroke: var(--text); }
+  .wordmark { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+  .site-nav { display: flex; align-items: center; gap: 16px; margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+  .site-nav a { color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  .site-nav a:hover { color: var(--text); }
+  .site-nav a.active { color: var(--text); border-image: var(--iridescent) 1; border-bottom: 2px solid; }
+
+  .page-sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 22px; }
+
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  section h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; margin: 0 0 4px; color: var(--text); display: flex; align-items: center; gap: 9px; }
+  section h2::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--iridescent); background-size: 300% 100%; flex-shrink: 0; }
+  section .section-sub { color: var(--muted); font-size: 0.8rem; margin: 0 0 14px; }
+
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    padding: 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+  }
+  .card.workflow { border-left-color: var(--workflow); }
+  .card.flight-orders { border-left-color: var(--flight); }
+  .card .top-line { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .card .status-word { font-family: var(--font-mono); font-size: 0.78rem; color: var(--workflow); }
+  .card.flight-orders .status-word { color: var(--flight); }
+  .card .title { font-family: var(--font-display); font-weight: 600; font-size: 0.96rem; }
+  .card .body-text { font-size: 0.88rem; color: var(--text); margin-bottom: 8px; }
+  .card .meta-line { font-size: 0.78rem; color: var(--muted); font-family: var(--font-mono); }
+  .card .ts { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); margin-top: 6px; }
+
+  .empty-state { color: var(--muted); font-size: 0.85rem; padding: 24px 4px; text-align: center; }
+  footer { color: var(--muted); font-size: 0.76rem; text-align: center; margin-top: 28px; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 64 32" aria-hidden="true">
+        <circle class="mark-dot" cx="8" cy="16" r="7"/>
+        <path class="mark-chev" d="M24 4 L48 16 L24 28" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="wordmark">level941</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">board</a>
+      <a href="observatory.html">observatory</a>
+      <a href="signal.html">signal</a>
+      <a href="breadbox.html" class="active">breadbox</a>
+      <a href="graveyard.html">graveyard</a>
+    </nav>
+  </header>
+
+  <p class="page-sub">a mirror of the box's public Discord channel. every entry here was approved by hand before it posted -- nothing on this page ever auto-published.</p>
+
+  <section>
+    <h2>the channel</h2>
+    <p class="section-sub">status word first, honest labels, evidence linked. shipped. / building. / testing. / planned.</p>
+    <div class="card-list" id="cardList"></div>
+  </section>
+
+  <footer id="footerNote">—</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function timeAgo(iso) {
+    if (!iso) return '—';
+    var then = new Date(iso).getTime();
+    var diff = Math.max(0, Date.now() - then);
+    var s = Math.floor(diff / 1000);
+    if (s < 60) return s + 's ago';
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + 'm ago';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + 'h ago';
+    var d = Math.floor(h / 24);
+    return d + 'd ago';
+  }
+
+  function renderCard(e) {
+    var card = el('div', 'card ' + e.postType);
+    if (e.postType === 'workflow') {
+      var top = el('div', 'top-line');
+      top.appendChild(el('span', 'status-word', e.status));
+      top.appendChild(el('span', 'title', e.title));
+      card.appendChild(top);
+      card.appendChild(el('div', 'body-text', e.body));
+      card.appendChild(el('div', 'meta-line', 'evidence: ' + e.evidenceLink));
+    } else {
+      card.appendChild(el('div', 'title', e.angle));
+      card.appendChild(el('div', 'body-text', e.fact));
+      card.appendChild(el('div', 'meta-line', e.make + ' · ' + e.clock));
+    }
+    card.appendChild(el('div', 'ts', timeAgo(e.postedAt)));
+    return card;
+  }
+
+  fetch('breadbox.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (data) {
+      var wrap = document.getElementById('cardList');
+      wrap.innerHTML = '';
+      var entries = data.entries || [];
+      if (entries.length === 0) {
+        wrap.appendChild(el('div', 'empty-state', 'nothing posted yet.'));
+      } else {
+        entries.forEach(function (e) { wrap.appendChild(renderCard(e)); });
+      }
+      document.getElementById('footerNote').textContent = 'last updated ' + timeAgo(data.generatedAt) + '.';
+    })
+    .catch(function () {
+      document.getElementById('cardList').innerHTML = '';
+      document.getElementById('cardList').appendChild(el('div', 'empty-state', 'could not load the channel mirror.'));
+    });
+})();
+</script>
+</body>
+</html>

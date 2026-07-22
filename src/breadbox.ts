@@ -196,6 +196,30 @@ async function postToDiscord(e: QueueEntry): Promise<void> {
   if (!res.ok) throw new Error(`webhook responded ${res.status} ${res.statusText}`);
 }
 
+// Public mirror of the channel: posted entries only, never drafts or
+// rejected -- the queue itself (data/breadbox-queue.json) stays private
+// operational state, this is what docs/breadbox.html actually reads.
+export function publishPublicMirror(q: QueueEntry[]): void {
+  const posted = q
+    .filter((e) => e.state === 'posted')
+    .sort((a, b) => (a.postedAt! < b.postedAt! ? 1 : -1))
+    .map((e) => ({
+      id: e.id,
+      postType: e.postType,
+      status: e.status ?? null,
+      title: e.title ?? null,
+      body: e.body ?? null,
+      evidenceLink: e.evidenceLink ?? null,
+      fact: e.fact ?? null,
+      angle: e.angle ?? null,
+      make: e.make ?? null,
+      clock: e.clock ?? null,
+      postedAt: e.postedAt,
+    }));
+  const outPath = path.join(ROOT, 'docs', 'breadbox.json');
+  fs.writeFileSync(outPath, JSON.stringify({ generatedAt: new Date().toISOString(), entries: posted }, null, 2) + '\n');
+}
+
 async function cmdApprove(id: string): Promise<void> {
   const q = loadQueue();
   const entry = q.find((e) => e.id === id);
@@ -223,6 +247,7 @@ async function cmdApprove(id: string): Promise<void> {
   entry.decidedAt = new Date().toISOString();
   entry.postedAt = new Date().toISOString();
   saveQueue(q);
+  publishPublicMirror(q);
   console.log(`posted ${id} [${entry.postType}]`);
 }
 
