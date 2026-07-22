@@ -271,6 +271,29 @@ export async function writeLiveState(cfg: AppConfig): Promise<LiveState> {
   return state;
 }
 
+// execFileSync throws with stdout/stderr Buffers attached on non-zero exit;
+// this pulls the text out regardless of which of those actually got written.
+function execErrorText(e: unknown): string {
+  const err = e as { stderr?: Buffer | string; stdout?: Buffer | string; message?: string };
+  const stderr = err.stderr ? err.stderr.toString() : '';
+  const stdout = err.stdout ? err.stdout.toString() : '';
+  return (stderr + stdout).trim() || err.message || String(e);
+}
+
+// Credential/permission rejections (wrong `gh` account active, expired
+// token, no repo access) look nothing like a non-fast-forward rejection at
+// the git level -- both just make `git push` exit non-zero. Left
+// undistinguished, an auth failure gets treated as "remote moved," and the
+// rebase-retry below fails too (for the same auth reason), so the cycle
+// logs a divergence message forever while commits pile up unpushed. This
+// tells the two apart from the process's stderr/stdout so auth failures are
+// reported for what they are instead of stranding commits silently.
+function isAuthFailure(text: string): boolean {
+  return /(^|\W)(403|401)(\W|$)|permission to .* denied|authentication failed|could not read username|could not read password|invalid username or password|remote: repository not found|fatal: could not read from remote repository/i.test(
+    text
+  );
+}
+
 // Best-effort git commit + push of docs/live-state.json only. Never throws
 // out of the poll loop: a publish failure (no repo yet, no remote, offline)
 // just means the next cycle tries again.
@@ -283,6 +306,11 @@ export async function writeLiveState(cfg: AppConfig): Promise<LiveState> {
 // ANY uncommitted changes (not just in live-state.json), so this can never
 // clobber concurrent edits sitting in this same directory: it just fails
 // cleanly, gets caught below, and the next cycle tries again.
+//
+// Auth failures are a different failure mode from divergence (see
+// isAuthFailure above) and are reported loudly rather than folded into the
+// "remote has diverged" message -- rebasing can never fix a bad credential,
+// so this skips the pointless rebase attempt and says what's actually wrong.
 export function publishLiveState(): void {
   const opts = { stdio: 'pipe' as const };
   try {
@@ -300,25 +328,43 @@ export function publishLiveState(): void {
       /* exit 1 = there is a diff, fall through to commit */
     }
     execFileSync('git', ['commit', '-m', `live-state: ${new Date().toISOString()}`], opts);
+
+    let firstPushError: unknown;
     try {
       execFileSync('git', ['push'], opts);
       console.log('publish: live-state.json committed and pushed.');
       return;
-    } catch {
-      /* rejected, most likely non-fast-forward -- try one rebase+retry */
+    } catch (e) {
+      firstPushError = e; // rejected -- could be non-fast-forward, could be auth
     }
+
+    const firstPushText = execErrorText(firstPushError);
+    if (isAuthFailure(firstPushText)) {
+      console.log(
+        `publish: AUTH FAILURE pushing to origin, not a divergence -- commit is saved locally but not published. Check credentials (e.g. "gh auth status"). ${firstPushText.slice(0, 300)}`
+      );
+      return;
+    }
+
     try {
       execFileSync('git', ['fetch', 'origin'], opts);
       execFileSync('git', ['rebase', 'origin/main'], opts);
       execFileSync('git', ['push'], opts);
       console.log('publish: remote had moved, rebased onto it and pushed.');
-    } catch {
+    } catch (e) {
       try {
         execFileSync('git', ['rebase', '--abort'], opts);
       } catch {
         /* nothing to abort */
       }
-      console.log('publish: remote has diverged and could not be auto-rebased. Skipping this cycle.');
+      const text = execErrorText(e);
+      if (isAuthFailure(text)) {
+        console.log(
+          `publish: AUTH FAILURE pushing to origin, not a divergence -- commit is saved locally but not published. Check credentials (e.g. "gh auth status"). ${text.slice(0, 300)}`
+        );
+      } else {
+        console.log('publish: remote has diverged and could not be auto-rebased. Skipping this cycle.');
+      }
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
