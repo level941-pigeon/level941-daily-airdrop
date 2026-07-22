@@ -72,7 +72,22 @@ async function checkAutoUpdateToggle(): Promise<void> {
   }
 }
 
+// A manual kickstart outside the 9:55 window would otherwise produce zero
+// visible output whenever both real checks are already green (exactly the
+// case right after a successful run) -- this sends one unmistakably
+// labeled post so a manual verification always has proof it reached
+// Discord, independent of whatever the real conditions happen to be.
+async function sendLabeledTestPost(): Promise<void> {
+  await alert(
+    `[TEST] level941 dead-man's switch manual verification -- fired at ${new Date().toISOString()}, ` +
+      `not a real incident. If you're seeing this, the webhook path from the daemon context works.`
+  );
+}
+
 async function main(): Promise<void> {
+  if (process.argv[2] === 'test') {
+    await sendLabeledTestPost();
+  }
   await checkTodaysRun();
   await checkAutoUpdateToggle();
 }
