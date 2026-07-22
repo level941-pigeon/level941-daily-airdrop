@@ -17,6 +17,7 @@ import {
   getExtensionTypes,
   getMint,
 } from '@solana/spl-token';
+import { checkTokenContent } from './content-denylist.js';
 
 export const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
@@ -117,7 +118,33 @@ export async function screenMint(
   } catch (e) {
     reasons.push('mint unreadable');
   }
+
+  const content = await screenTokenContent(connection.rpcEndpoint, mint.toBase58());
+  reasons.push(...content.reasons);
+
   return { ok: reasons.length === 0, reasons };
+}
+
+// Name/symbol check via the Helius DAS getAsset call already used elsewhere
+// in this codebase for token metadata. A lookup failure is treated as
+// "can't confirm clean" -- same fail-closed posture as an unreadable mint,
+// not a silent pass. See content-denylist.ts for the matching rules and
+// why the two-tier (substring vs exact-word) split exists.
+export async function screenTokenContent(rpcEndpoint: string, mint: string): Promise<{ ok: boolean; reasons: string[] }> {
+  try {
+    const res = await fetch(rpcEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getAsset', params: { id: mint } }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return { ok: false, reasons: ['content screen unreachable'] };
+    const json = (await res.json()) as { result?: { content?: { metadata?: { name?: string; symbol?: string } } } };
+    const meta = json.result?.content?.metadata;
+    return checkTokenContent(meta?.name, meta?.symbol);
+  } catch {
+    return { ok: false, reasons: ['content screen unreachable'] };
+  }
 }
 
 // Realizable value of the full amount via a swap quote to USDC.
