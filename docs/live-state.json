@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T21:32:46.758Z",
+  "generatedAt": "2026-07-22T21:34:03.092Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -343,24 +343,6 @@
       "solscanUrl": "https://solscan.io/token/4fSWEw2wbYEUCcMtitzmeGUfqinoafXxkhqZrA9Gpump"
     },
     {
-      "mint": "J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump",
-      "amountTokens": "11009.471926",
-      "valueUsd": 1.386784,
-      "status": "ready",
-      "reason": "cleared, worth ~$1.39",
-      "coolingSecondsRemaining": 0,
-      "solscanUrl": "https://solscan.io/token/J5bTgnS76LGWt7rQuSi29NCCsT6JqLLxXcPSDGk1pump"
-    },
-    {
-      "mint": "4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump",
-      "amountTokens": "1555522.589997",
-      "valueUsd": 3.863204,
-      "status": "ready",
-      "reason": "cleared, worth ~$3.86",
-      "coolingSecondsRemaining": 0,
-      "solscanUrl": "https://solscan.io/token/4CnyTYkkYqSTKVGPQPV4ogxdW4pT31jtoKtLSKdGpump"
-    },
-    {
       "mint": "A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump",
       "amountTokens": "100492447.15929",
       "valueUsd": 239.516256,
@@ -371,7 +353,7 @@
     }
   ],
   "holderCount": 1032,
-  "solBalance": 0.232703999,
+  "solBalance": 0.292416185,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
