@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T22:59:29.288Z",
+  "generatedAt": "2026-07-22T23:00:45.809Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -353,7 +353,7 @@
     }
   ],
   "holderCount": 1032,
-  "solBalance": 0.292416185,
+  "solBalance": 1.292416185,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
