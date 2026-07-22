@@ -1,7 +1,15 @@
 {
-  "generatedAt": "2026-07-22T23:29:35.945Z",
+  "generatedAt": "2026-07-22T23:30:52.810Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
+    {
+      "ts": "2026-07-22T23:30:27.621Z",
+      "kind": "sweep",
+      "label": "0.000100275 SOL → GDRG...NDC1",
+      "amountTokens": "0.000100275",
+      "wallet": "GDRG...NDC1",
+      "solscanUrl": "https://solscan.io/tx/4fGyHKzCL1bvutY5zXE5BXMvcwerSDcW5qouyFnbg1DiWCEXJPq1HLuB3CZP3fzeotxqmfaXS7rsRzRV1eRWLYf3"
+    },
     {
       "ts": "2026-07-22T23:28:52.874Z",
       "kind": "sweep",
@@ -313,14 +321,6 @@
       "amountTokens": "0.000251955",
       "wallet": "2NxA...7VpZ",
       "solscanUrl": "https://solscan.io/tx/2z5xdaU5vPhnNgn3Ce6EuN5h4LaNsDub2V6gtd9tFVBEv64P9uhjm3KBHAiwKWT6A1A7VjBo6bpniUN9vWsNsiYT"
-    },
-    {
-      "ts": "2026-07-22T23:28:19.485Z",
-      "kind": "sweep",
-      "label": "0.000253020 SOL → DBa7...vfHh",
-      "amountTokens": "0.000253020",
-      "wallet": "DBa7...vfHh",
-      "solscanUrl": "https://solscan.io/tx/5ryHsvWAWZcwnVfXP5cTrGvrEY3Vy98CkGXTkBBUvHJRe16rLcfKoVgvUTEs9VLramLsDHiQMFcHAtjbrMAv2xMt"
     }
   ],
   "foreignTokens": [
@@ -353,7 +353,7 @@
     }
   ],
   "holderCount": 1034,
-  "solBalance": 0.313213316,
+  "solBalance": 0.313108041,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
