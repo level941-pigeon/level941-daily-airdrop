@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T21:41:42.589Z",
+  "generatedAt": "2026-07-22T21:42:58.999Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -328,8 +328,8 @@
       "mint": "9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump",
       "amountTokens": "0.00005",
       "valueUsd": null,
-      "status": "pending-value",
-      "reason": "no sellable quote yet, retrying next run",
+      "status": "denied",
+      "reason": "on the denylist",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump"
     },
