@@ -88,6 +88,63 @@ const MACHINE_INTERNALS_PATTERNS = [
   'sudo ',
 ];
 
+// DEVICE_FINGERPRINT: three classes (identity / device / security), all
+// permanent, all hard-fail, all reported as the single generic string
+// "BLOCKED: SECURITY" -- never the matched term, never which pattern hit.
+// A rejection message that says *what* it caught is itself a leak vector
+// (a log line reading "contains hostname: bns-mac-mini" defeats the point
+// of blocking the hostname). This is the one check in this file that
+// deliberately withholds its own reasoning from every log the public path
+// touches.
+//
+// Seeded from what has actually appeared in this project's own working
+// session -- hostname, OS build, the deploy key filename -- because those
+// are the concretely known leak risks, not a hypothetical list. Extend it
+// the moment anything else identifying surfaces; this is not meant to be
+// exhaustive on day one.
+//
+// Two match tiers for the same collision reason as content-denylist.ts:
+// "bn" as a bare substring would match constantly (been, bnb, cabin...),
+// so short/collision-prone tokens are exact-word-only.
+const DEVICE_FINGERPRINT_SUBSTRING_PATTERNS = [
+  // identity class
+  // (no confirmed personal name/handle/location on record yet -- add here
+  // the moment one surfaces; this list is not a promise nothing exists)
+  // device class
+  'bns-mac-mini',
+  'macos tahoe',
+  '25f84',
+  '25f71',
+  'darwin 25',
+  // security class
+  'level941_deploy',
+  '.ssh/',
+  'id_ed25519',
+  'private key',
+  'keychain',
+  'deploy key',
+  'credential helper',
+  'osxkeychain',
+];
+const DEVICE_FINGERPRINT_WORD_PATTERNS = ['bn'];
+
+function checkDeviceFingerprint(text: string): string[] {
+  const lower = text.toLowerCase();
+  const words = new Set(lower.split(/[^a-z0-9._-]+/).filter(Boolean));
+  const hit =
+    DEVICE_FINGERPRINT_SUBSTRING_PATTERNS.some((p) => lower.includes(p)) ||
+    DEVICE_FINGERPRINT_WORD_PATTERNS.some((p) => words.has(p)) ||
+    // absolute path under this machine's home directory -- doctrine's
+    // "home-directory or absolute paths" clause. The existing local-path
+    // check below already catches this generically too; this duplicate
+    // entry point exists so it also gets the SECURITY-generic treatment
+    // rather than the more descriptive "contains a local filesystem path"
+    // message the general check produces.
+    /\/Users\/[a-zA-Z0-9_.-]+/.test(text) ||
+    /~\/[a-zA-Z0-9_.\/-]+/.test(text);
+  return hit ? ['BLOCKED: SECURITY'] : [];
+}
+
 function envKeyNames(): string[] {
   const envPath = path.join(ROOT, '.env');
   if (!fs.existsSync(envPath)) return [];
@@ -112,11 +169,10 @@ function envSecretValues(): string[] {
   return names.map((n) => process.env[n]).filter((v): v is string => !!v && v.length > 4);
 }
 
-// Flight Orders-only additions. "Angles only, forever" is the whole point
-// of that post type -- a price call or a "post this exactly" instruction
-// is precisely what turns an angle into either financial advice or a
-// copy-paste amplification vector, so these hard-fail there specifically
-// rather than folding into the base linter every post type shares.
+// Doctrine item 2: price/prediction language and verbatim-copy
+// instructions are hard-fails across the whole public path, not just
+// flight-orders -- "angles only, forever" is a house-wide rule now, not a
+// per-voice add-on.
 const PRICE_PREDICTION_PATTERNS = [
   'price target',
   'will hit',
@@ -142,20 +198,19 @@ const VERBATIM_INSTRUCTION_PATTERNS = [
   'post as is',
 ];
 
-export function lintFlightOrders(text: string): string[] {
-  const violations = lintDraft(text);
-  const lower = text.toLowerCase();
-  for (const p of PRICE_PREDICTION_PATTERNS) {
-    if (lower.includes(p)) violations.push(`contains price/prediction language: "${p}"`);
-  }
-  if (/\$\s?\d/.test(text)) violations.push('contains a price-looking dollar figure');
-  for (const p of VERBATIM_INSTRUCTION_PATTERNS) {
-    if (lower.includes(p)) violations.push(`contains a verbatim-copy instruction: "${p}"`);
-  }
-  return [...new Set(violations)];
-}
+// Own handle, not a third-party identity reference -- doctrine explicitly
+// wants "tag @level941" as normal community language, so it's exempt from
+// the @-mention flag rather than hard-failing every post that follows the
+// house style.
+const SELF_HANDLE = '@level941';
 
 export function lintDraft(text: string): string[] {
+  // Security-class hit short-circuits everything else: the whole point is
+  // that a blocked post's rejection reason never itself describes what it
+  // caught, so it can't leak by way of the linter's own output.
+  const securityHit = checkDeviceFingerprint(text);
+  if (securityHit.length > 0) return securityHit;
+
   const violations: string[] = [];
   const lower = text.toLowerCase();
 
@@ -183,11 +238,19 @@ export function lintDraft(text: string): string[] {
   for (const p of PROFIT_GUARANTEE_WORD_PATTERNS) {
     if (words.has(p)) violations.push(`contains profit/guarantee language: "${p}"`);
   }
-  if (/@[a-zA-Z0-9_]{2,}/.test(text)) {
+  const mentions = text.match(/@[a-zA-Z0-9_]{2,}/g) ?? [];
+  if (mentions.some((m) => m.toLowerCase() !== SELF_HANDLE)) {
     violations.push('contains an @-mention -- review for real-world identity reference before approving');
   }
   for (const p of MACHINE_INTERNALS_PATTERNS) {
     if (lower.includes(p)) violations.push(`contains machine/daemon internals: "${p.trim()}"`);
+  }
+  for (const p of PRICE_PREDICTION_PATTERNS) {
+    if (lower.includes(p)) violations.push(`contains price/prediction language: "${p}"`);
+  }
+  if (/\$\s?\d/.test(text)) violations.push('contains a price-looking dollar figure');
+  for (const p of VERBATIM_INSTRUCTION_PATTERNS) {
+    if (lower.includes(p)) violations.push(`contains a verbatim-copy instruction: "${p}"`);
   }
   violations.push(...checkCopyLaw(text));
 

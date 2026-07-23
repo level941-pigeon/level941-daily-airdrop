@@ -34,6 +34,7 @@
     "scheduler-guard": "tsx src/scheduler-guard.ts",
     "deadman-check": "tsx src/deadman-check.ts",
     "breadbox": "tsx src/breadbox.ts",
+    "post-commit-draft": "tsx src/post-commit-draft.ts",
     "dashboard-poll": "tsx src/poller.ts",
     "dashboard-poll-once": "tsx src/poller.ts once"
   },
