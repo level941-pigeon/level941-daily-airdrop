@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T17:11:20.562Z",
+  "generatedAt": "2026-07-23T17:12:37.110Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -334,6 +334,15 @@
       "solscanUrl": "https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
     },
     {
+      "mint": "A4jax16gqHq7QVRVYCZiB1i5iqCg4vVc7nUnJLqGLu1n",
+      "amountTokens": "22069747.235491",
+      "valueUsd": null,
+      "status": "pending-screen",
+      "reason": "arrived since the last pipeline run, not yet screened",
+      "coolingSecondsRemaining": null,
+      "solscanUrl": "https://solscan.io/token/A4jax16gqHq7QVRVYCZiB1i5iqCg4vVc7nUnJLqGLu1n"
+    },
+    {
       "mint": "9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump",
       "amountTokens": "0.00005",
       "valueUsd": null,
@@ -359,6 +368,15 @@
       "reason": "no sellable quote yet, retrying next run",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
+    },
+    {
+      "mint": "8JjeSHi4LsbAHbCvk5mDDoMbkaB9eiZHsVu67fNXpump",
+      "amountTokens": "3858037.168536",
+      "valueUsd": null,
+      "status": "pending-screen",
+      "reason": "arrived since the last pipeline run, not yet screened",
+      "coolingSecondsRemaining": null,
+      "solscanUrl": "https://solscan.io/token/8JjeSHi4LsbAHbCvk5mDDoMbkaB9eiZHsVu67fNXpump"
     }
   ],
   "holderCount": 1015,
