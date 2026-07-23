@@ -1,326 +1,326 @@
 {
-  "generatedAt": "2026-07-23T20:07:47.263Z",
+  "generatedAt": "2026-07-23T20:09:03.868Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
-      "ts": "2026-07-23T20:07:47.254Z",
+      "ts": "2026-07-23T20:08:57.570Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → BJx6...uzW1",
+      "label": "38.010833 pigeon → 3GFj...CdKw",
       "amountTokens": "38.010833",
-      "wallet": "BJx6...uzW1",
-      "solscanUrl": "https://solscan.io/tx/4sURQKRZ2zhXu4hvoYyGdyZYXjAXTzNwPyHXGZtCX2isGnFF8TKEh2CQRdAKhVyy3gT6XGwpsN8FeKRuohNG3EDN"
+      "wallet": "3GFj...CdKw",
+      "solscanUrl": "https://solscan.io/tx/42BGrMbufrFWXSLRKgXUYKLpV8JK3sVRK4eVkHRQwvSrUHyYdERA1BpMB9nPPtDm2YgRoQwgLchoq6Z9PbdrLMEz"
     },
     {
-      "ts": "2026-07-23T20:07:46.403Z",
+      "ts": "2026-07-23T20:08:56.857Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 39rw...5EfH",
+      "label": "38.010833 pigeon → 7kRf...cB5D",
       "amountTokens": "38.010833",
-      "wallet": "39rw...5EfH",
-      "solscanUrl": "https://solscan.io/tx/22LVAnD4BWpFxnZ4qpF9qifa2m5LjBnGsxaKnEJSqappbgMEYtg8zMofMHVvU3HiNruHqLxRKDjCgY3unGqMMreZ"
+      "wallet": "7kRf...cB5D",
+      "solscanUrl": "https://solscan.io/tx/2DtAdg94YcJ3p4rohDPKGYfzTaasi1pPSysPpT2eSXqNXHSxoik6FHXEvGi3ouxYc7z5TDWUhRoBCpStw7ZJDwcF"
     },
     {
-      "ts": "2026-07-23T20:07:45.163Z",
+      "ts": "2026-07-23T20:08:55.978Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → G4dn...19H9",
+      "label": "38.010833 pigeon → 5fWS...WQUB",
       "amountTokens": "38.010833",
-      "wallet": "G4dn...19H9",
-      "solscanUrl": "https://solscan.io/tx/4YctaYJrHMaM8tv4J7ZVbnQLXCPJ3ViHzpzfYqNiudmNuNXUfKVUXrtkzFvjUud8BnTyzch2QqLbUtV5Js73KG6R"
+      "wallet": "5fWS...WQUB",
+      "solscanUrl": "https://solscan.io/tx/34CrW4q8h8XddVUm2u5PzxrUDfkdusMHZaQnGi7XvQ3sSvf9CtTUjnwTW5qpjvfhU8mToHib6HqsoKhVLn9atzFH"
     },
     {
-      "ts": "2026-07-23T20:07:44.338Z",
+      "ts": "2026-07-23T20:08:55.251Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → UC8B...HZEJ",
+      "label": "38.010833 pigeon → FLfq...tLSo",
       "amountTokens": "38.010833",
-      "wallet": "UC8B...HZEJ",
-      "solscanUrl": "https://solscan.io/tx/5wHHDdr9MNR88DjUNNj7AxQcPY1ku4XbY6FKY7z6rS3VGRMq9ygKYK1FWLnwjEXskXhEVfcftcbJkoJLhzVcdAPx"
+      "wallet": "FLfq...tLSo",
+      "solscanUrl": "https://solscan.io/tx/2yvwwaZTGKYQabQ6p9NM3LVbYdcontkQrJAKRF9iDVEpmBEWAvhiZfpoNYyKXaBXM2iYiBYobWdP6sNwkLo9UwbA"
     },
     {
-      "ts": "2026-07-23T20:07:43.631Z",
+      "ts": "2026-07-23T20:08:54.406Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → EqCS...SgPN",
+      "label": "38.010833 pigeon → 3fXi...aseX",
       "amountTokens": "38.010833",
-      "wallet": "EqCS...SgPN",
-      "solscanUrl": "https://solscan.io/tx/2nVUBisdyWfQSb1FhAC95eJuJFUCCLEdi85FxkWkoADPCNARdfcBR2Vt9UqVZ5V6qDzxdzS5A5ooV3egZp225P9F"
+      "wallet": "3fXi...aseX",
+      "solscanUrl": "https://solscan.io/tx/LLeCqLxNYHBFMoLgUz2W9cfcZPAK3N4hDanHEdpnBPaUvwy3vMYAtBVFxtLL8G6M9LLfG126YABUuMDSoVpwLoN"
     },
     {
-      "ts": "2026-07-23T20:07:42.868Z",
+      "ts": "2026-07-23T20:08:53.624Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 852h...Cbcq",
+      "label": "38.010833 pigeon → Grq4...kY7J",
       "amountTokens": "38.010833",
-      "wallet": "852h...Cbcq",
-      "solscanUrl": "https://solscan.io/tx/5auCTzta6pz1Vy2GaWFBHudgWDGbULV1s4Aun6nAcQA4uHVwGe8hrNuJJqsmDdySzbn6aE8YxG3yuNia99Kwnbog"
+      "wallet": "Grq4...kY7J",
+      "solscanUrl": "https://solscan.io/tx/31sVrn7jGjoH3uJMq6Y8GBHVATHHsfe5ES79Vk7cSmeuKQJD7dH7ApDWLY8dRC5oevJZ1cJfUQVDgRBzamDFhymP"
     },
     {
-      "ts": "2026-07-23T20:07:42.135Z",
+      "ts": "2026-07-23T20:08:52.453Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 9Evm...XchB",
+      "label": "38.010833 pigeon → D7NQ...wedi",
       "amountTokens": "38.010833",
-      "wallet": "9Evm...XchB",
-      "solscanUrl": "https://solscan.io/tx/LWGz4B6CSmMzLvMnTfZ3GHorXFr71gfbgCsGyB894ENtq33jxp1wcXJjwGXGZF3TGUrhaezhjpNb96NK8YpacuT"
+      "wallet": "D7NQ...wedi",
+      "solscanUrl": "https://solscan.io/tx/Cg1mghVc9KPpwg8e2PLnE9Yn2fmFEzNCEviBJ9fimSCuC57gpQxDixXCK8a1cGGxHPgr1eyV1jAEJipStSufSx3"
     },
     {
-      "ts": "2026-07-23T20:07:01.143Z",
+      "ts": "2026-07-23T20:08:51.255Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → CLDZ...wGBW",
+      "label": "38.010833 pigeon → 5r5R...2HcA",
       "amountTokens": "38.010833",
-      "wallet": "CLDZ...wGBW",
-      "solscanUrl": "https://solscan.io/tx/3k8sMfw3vB7Cm4NCUNmJPKT9955k7e4hCm1tWbsRKjTBkg7G5ssfaHBawKW5PzUZN9FjRY4Jbv3msttnrx4MY61T"
+      "wallet": "5r5R...2HcA",
+      "solscanUrl": "https://solscan.io/tx/31ceFmVGropMFFWJm5SiEPd4TCsXgu9Mr5yKRYvvpLPv7HdSBJVXLFtkeyuc8XVxDtD7Kqu7yKAeBjrbZSGGS7Ct"
     },
     {
-      "ts": "2026-07-23T20:07:00.294Z",
+      "ts": "2026-07-23T20:08:50.335Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 8Lab...Dq76",
+      "label": "38.010833 pigeon → 9wzF...uDQy",
       "amountTokens": "38.010833",
-      "wallet": "8Lab...Dq76",
-      "solscanUrl": "https://solscan.io/tx/22GNUL6hLUX1CJ8ExddvVmgaS4XCXNu8YWx6ibf14V2xqGsPeNjFzS9yejT37Q5YHLJnsns3cxpFF4wQ8jzZLoga"
+      "wallet": "9wzF...uDQy",
+      "solscanUrl": "https://solscan.io/tx/3ercZtovF1UXkCgwDjcn7FdhZCadp8P5zGQYsYn84Y91mr7r57JZQux4o7z2WBm6u95GXFGgdSwFCuRn8H1WWx7Q"
     },
     {
-      "ts": "2026-07-23T20:06:58.476Z",
+      "ts": "2026-07-23T20:08:49.382Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → BiKS...qfbb",
+      "label": "38.010833 pigeon → 4Wo1...1dUo",
       "amountTokens": "38.010833",
-      "wallet": "BiKS...qfbb",
-      "solscanUrl": "https://solscan.io/tx/24qcAFPCbsSCmZibkQDDSzqQtyrUoZjc9Fqns31Hn8Yv7D58rKPF2QKDQTZoFJ5qTTr79UdxsatUnu6sUL4Y6DxG"
+      "wallet": "4Wo1...1dUo",
+      "solscanUrl": "https://solscan.io/tx/3xD36dpBqQsYheRoGKcbU2nPUvdeh43yR8HBAs3RyE8ZPKmzqiqjr1CBqAYxj3V1fWDr52pCWT5qgR5fveXZWZoR"
     },
     {
-      "ts": "2026-07-23T20:06:57.273Z",
+      "ts": "2026-07-23T20:08:48.492Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → EZmz...V1dg",
+      "label": "38.010833 pigeon → 7j8Q...DS1s",
       "amountTokens": "38.010833",
-      "wallet": "EZmz...V1dg",
-      "solscanUrl": "https://solscan.io/tx/auxPP3nDqKbPTHBqgYAGqMmDT59uLQ8BemvcXgoJ3hbtCyz7EuyTsLD4FFPmvAqZ1R92ZnRLNmYWjceLou6BfFZ"
+      "wallet": "7j8Q...DS1s",
+      "solscanUrl": "https://solscan.io/tx/4agzjBqwtNa3YRQBPWWhNKhGSWC646NMSDQ9ahBsL8dVyG746bF25qhRxFz1HGEiyeuRiZwNN7JUaTtuEJ52FJYT"
     },
     {
-      "ts": "2026-07-23T20:06:56.050Z",
+      "ts": "2026-07-23T20:08:47.649Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → FQKT...VHxG",
+      "label": "38.010833 pigeon → 5UvK...eNQC",
       "amountTokens": "38.010833",
-      "wallet": "FQKT...VHxG",
-      "solscanUrl": "https://solscan.io/tx/4x4gduMcFQV9z6eEdRLkBwTswK5CxajbWTcQtoheLbF6f8nmUNAoUuMBr5Ho8EtKLZ4dZ26Fapt6NQsYHywi41dM"
+      "wallet": "5UvK...eNQC",
+      "solscanUrl": "https://solscan.io/tx/5g99hPnPA2xp7U91NBHHS87xuxeBPaPuAZsD4Jav8uhQdhfNFuQzbDT4MqQyFj1X9vWRPJcc9ECUughWb3uaC5pH"
     },
     {
-      "ts": "2026-07-23T20:06:54.510Z",
+      "ts": "2026-07-23T20:08:46.514Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → EGKK...3oMp",
+      "label": "38.010833 pigeon → 3aLZ...ghgW",
       "amountTokens": "38.010833",
-      "wallet": "EGKK...3oMp",
-      "solscanUrl": "https://solscan.io/tx/2QCq7ebS5qgmyfq79dJ4ca5KdUurDFv8hR5meNdr2ki9uiUP3KcSi3ECt5RZKw5bAL77uuN95jamB1xDeDZ9BWsF"
+      "wallet": "3aLZ...ghgW",
+      "solscanUrl": "https://solscan.io/tx/2aKa9Fi8dYDUnsX7ZSSBrceujBs4kJJwhNoqjCAG5xYzfx5uaNTnSMmtfJhvbSABHJtdx5rSCnuDURBhxq1rX5Kh"
     },
     {
-      "ts": "2026-07-23T20:06:53.203Z",
+      "ts": "2026-07-23T20:08:45.571Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → HCcn...ASrm",
+      "label": "38.010833 pigeon → 2jR2...txPj",
       "amountTokens": "38.010833",
-      "wallet": "HCcn...ASrm",
-      "solscanUrl": "https://solscan.io/tx/2TZwGZaZjXYyB9YzWHq9kRH8PFVUZfBWkXtEqPjK38VqTYN5vdc7Jib4wKc5Nq4SeaBU4EwV9vFJRpNQ8dNiPx8V"
+      "wallet": "2jR2...txPj",
+      "solscanUrl": "https://solscan.io/tx/2imwuS7NEiuZqDqaadqbx48HRDJ9arSrqS43VcvC9atyxrK3g8rJFZhLCeRwDi7w4LwHZS1nJypD5LXP6rFWzBQt"
     },
     {
-      "ts": "2026-07-23T20:06:52.439Z",
+      "ts": "2026-07-23T20:08:44.737Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 8eBz...BxYC",
+      "label": "38.010833 pigeon → 34ey...BSQo",
       "amountTokens": "38.010833",
-      "wallet": "8eBz...BxYC",
-      "solscanUrl": "https://solscan.io/tx/2DEHYj16yBVnpiE49R1QtEGLufMjwmt6n15pLFLBEPcdsm5FN5ER9ugLVoUw24WpMsEXcLV3JaTZM2gGLhQ1nMFg"
+      "wallet": "34ey...BSQo",
+      "solscanUrl": "https://solscan.io/tx/UQrMuaEoq43jjj5ejzWVZNaszx1baUkSXYoEj5unRnYFc3HYuVmT5wgwhArdgXUszxmYyPqt3A7BBAoddy7cVAt"
     },
     {
-      "ts": "2026-07-23T20:06:51.522Z",
+      "ts": "2026-07-23T20:08:15.692Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 2HLp...ST5U",
+      "label": "38.010833 pigeon → EmLG...81oX",
       "amountTokens": "38.010833",
-      "wallet": "2HLp...ST5U",
-      "solscanUrl": "https://solscan.io/tx/4hcCU9gYsUFQ9QoQrddPa7AFzxgSgSMV3R8svFZY6gdx4UhvDCfK1Nk41EV6jzfJoc36SPqcHrpm1SEAC7n4V4ug"
+      "wallet": "EmLG...81oX",
+      "solscanUrl": "https://solscan.io/tx/5N8ScPC4aDpzZjdibSa1oKfx2cxACvcYbJzi4Du1rGfMCq1CBeStSXkekPinP1Mj2Dqhd7NGC3mXiE7TiAcd9zyr"
     },
     {
-      "ts": "2026-07-23T20:06:50.708Z",
+      "ts": "2026-07-23T20:08:14.771Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → Yrbk...4meZ",
+      "label": "38.010833 pigeon → 4T1m...8UXn",
       "amountTokens": "38.010833",
-      "wallet": "Yrbk...4meZ",
-      "solscanUrl": "https://solscan.io/tx/5btoxZCUaxehDaPYNiRsdNQtHoWEpMbosdE7Szou19KhNxTMPiSuBgBdPfKHHDioZiDNnQfjMTbQxNTgaF5SHMWF"
+      "wallet": "4T1m...8UXn",
+      "solscanUrl": "https://solscan.io/tx/54tjhjLkwiXcE7eeHPZyshhhc1NFHoVkRn1dyEkwTRQ9mAhFToe82JACm5qTcKBuUtE92oeNLAGaxMuBZ2vr3ZMy"
     },
     {
-      "ts": "2026-07-23T20:06:49.853Z",
+      "ts": "2026-07-23T20:08:13.912Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → FLnM...W9dP",
+      "label": "38.010833 pigeon → GBz5...K9SX",
       "amountTokens": "38.010833",
-      "wallet": "FLnM...W9dP",
-      "solscanUrl": "https://solscan.io/tx/5UzXyxW7KoErVdR3xADf4ETdbzP3njUnUgmyudsjtpSWM5v3biE5iHehupkLwX8FXZkPgmErEmYGXWqT6fxgQZzp"
+      "wallet": "GBz5...K9SX",
+      "solscanUrl": "https://solscan.io/tx/3DwKJSgdNuEVoAB8HeUPMwBgYPPGHsSGnEu6acP3LE7RgEjSUQw6Zkf5Gme3Gh5yD2C1n2jv8NjSsYW6SMmhzjSB"
     },
     {
-      "ts": "2026-07-23T20:06:01.554Z",
+      "ts": "2026-07-23T20:08:13.040Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 4XUw...xmKf",
+      "label": "38.010833 pigeon → BYvb...FFEv",
       "amountTokens": "38.010833",
-      "wallet": "4XUw...xmKf",
-      "solscanUrl": "https://solscan.io/tx/2gN7gC9WCFAMyqtYwWZHXRXAJWUF7G4fMs7xoYnJH9p3Uw8PhENw51haMMZgoz2BC5RLPP2C6xHFqtxTmrPDojvj"
+      "wallet": "BYvb...FFEv",
+      "solscanUrl": "https://solscan.io/tx/33jwcwy8w6LMy6PdGgy8jpEW7vsfaH66ze648AWNUs8eWTNBvoegF2AH8DCDaUgCaom9koLPXZLStJojuNYEpZSF"
     },
     {
-      "ts": "2026-07-23T20:06:00.524Z",
+      "ts": "2026-07-23T20:08:12.109Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 8zyQ...R43t",
+      "label": "38.010833 pigeon → CLrd...6TZo",
       "amountTokens": "38.010833",
-      "wallet": "8zyQ...R43t",
-      "solscanUrl": "https://solscan.io/tx/4Beeqaj2sAhuESCwSwrYUunZX29jADbsuJXobKPyaFhp4YiU7pekbyyUNMTTnqxp7kiRKG1wbJPuAwYwaYXEFX4i"
+      "wallet": "CLrd...6TZo",
+      "solscanUrl": "https://solscan.io/tx/359VwyaeKgNaRxoMZGi9TjStFYVdVqzypjw7SZUe7DxSYFoEAuPGWiMjRs56xid2d3gKtDNZ5SgAooiF9Rpufq8a"
     },
     {
-      "ts": "2026-07-23T20:05:59.803Z",
+      "ts": "2026-07-23T20:08:11.185Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 4ogG...TLXD",
+      "label": "38.010833 pigeon → CoKo...k1QP",
       "amountTokens": "38.010833",
-      "wallet": "4ogG...TLXD",
-      "solscanUrl": "https://solscan.io/tx/47GGScYpytfUqKJ4sbkcqi6YmukufNnSfXLTGKZPdgJ86RdSCDy4A1iZ5i5W1ABjnCvLp3VCzCcfx8FnmJmBRzkm"
+      "wallet": "CoKo...k1QP",
+      "solscanUrl": "https://solscan.io/tx/5dy4H6Vj8z9h2jsLhfjXgzttPTXNuEnAjdX4z8AnQXB9KE6VivUugxPg26esTjWdAP1GgUSEYkVQQESz9VxBz8AS"
     },
     {
-      "ts": "2026-07-23T20:05:59.042Z",
+      "ts": "2026-07-23T20:08:10.231Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → G59t...Bt97",
+      "label": "38.010833 pigeon → 9XGt...pW7d",
       "amountTokens": "38.010833",
-      "wallet": "G59t...Bt97",
-      "solscanUrl": "https://solscan.io/tx/2gxb8SPJ38gcfub9C7fQpT8hvid17s1bGK7evxYH5DcPu8AdJW8ac32oEu1wQ6zy1hj6MUeKV2F9ofNoqkCKVfaP"
+      "wallet": "9XGt...pW7d",
+      "solscanUrl": "https://solscan.io/tx/5ST4AjoLncA2LFD7cx1M1Qf9XWiFjs2kx3j8BU7wrjH3JvjzJyEbYJGK8oJbodA4KReT7YhdsRbYrdgrhez3WRmo"
     },
     {
-      "ts": "2026-07-23T20:05:58.265Z",
+      "ts": "2026-07-23T20:08:08.933Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → DyL9...Uymv",
+      "label": "38.010833 pigeon → D5MZ...AzPU",
       "amountTokens": "38.010833",
-      "wallet": "DyL9...Uymv",
-      "solscanUrl": "https://solscan.io/tx/aY8BUrSLkinkmAcY8rJMzJ1fBiUxmy9QsLjHmycn3bqza4qdGKyLteeXrmJaWSKNzmVJmEqBUn5ZtsgjQ7QshtS"
+      "wallet": "D5MZ...AzPU",
+      "solscanUrl": "https://solscan.io/tx/4oUsLrryhk7y8MyLkfjCYc8oPGgk8EykVtc5eBUrA1Zi8vCN9TNAoSCWTxXZu6jcUKW9GHueFjKQmPBgX8TxDowA"
     },
     {
-      "ts": "2026-07-23T20:05:26.112Z",
+      "ts": "2026-07-23T20:08:08.118Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → AVYT...sT1q",
+      "label": "38.010833 pigeon → 7QGK...6BNV",
       "amountTokens": "38.010833",
-      "wallet": "AVYT...sT1q",
-      "solscanUrl": "https://solscan.io/tx/2T9qwvpCpyUDkqQnexxfpnMvmum1s4bWwmYxpZwvsmfcZv2mT4BWk2XzrxUtjiHP4CXyrBNmfWyjuxtTe15HHPeN"
+      "wallet": "7QGK...6BNV",
+      "solscanUrl": "https://solscan.io/tx/4xjNgMor1gT2LBgBFrSrVDk39VapuqVc4vcpLQbqxCfPEnLLjHhH2XDAcLB2vskQSkm4m9SSiUNQE8Qs2tHhZVBF"
     },
     {
-      "ts": "2026-07-23T20:05:25.395Z",
+      "ts": "2026-07-23T20:08:07.410Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → Hgco...HGA9",
+      "label": "38.010833 pigeon → 3BZW...9jDt",
       "amountTokens": "38.010833",
-      "wallet": "Hgco...HGA9",
-      "solscanUrl": "https://solscan.io/tx/M98Q6dgS7gbCDQQTFz4MCHQ7J1mDjrbJpCZ8CL8HSiuKxeNq3dP5dnLmnqJ5hFhyZ5Wvd95JebhLJY2akrezSsP"
+      "wallet": "3BZW...9jDt",
+      "solscanUrl": "https://solscan.io/tx/5RS9DPq1F5JeBnfNpkTcfcE67uCctoJk5oeZUHxdXR8s4Bev7RAY2X8bDeedN52zn4ncC1BnNdUTXYDq2cZaSzpc"
     },
     {
-      "ts": "2026-07-23T20:05:23.953Z",
+      "ts": "2026-07-23T20:08:06.583Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → D2p9...KRSE",
+      "label": "38.010833 pigeon → 9pW5...DiF6",
       "amountTokens": "38.010833",
-      "wallet": "D2p9...KRSE",
-      "solscanUrl": "https://solscan.io/tx/36bPRWNdngXRHRVT9nFnfgH28NA1ZbDkrroUUcBjZCD6nKii3epXHWNsi9qHQ2SH71t2xAN5tbYS4XvJFGgJpQhp"
+      "wallet": "9pW5...DiF6",
+      "solscanUrl": "https://solscan.io/tx/3nU6YVZiWoov7deUyBxnH8dfggwAQLh8jKTts4zhFrXRzE37p9fKVV3XZ83x24Fj8QmEYtXkJiMBWdyCpqmdxaGY"
     },
     {
-      "ts": "2026-07-23T20:05:23.247Z",
+      "ts": "2026-07-23T20:08:05.860Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → Ad7Q...vCsY",
+      "label": "38.010833 pigeon → 6Ppw...SmEy",
       "amountTokens": "38.010833",
-      "wallet": "Ad7Q...vCsY",
-      "solscanUrl": "https://solscan.io/tx/3JSzDhmyLfcNUBowbesXiezQdmZoqG9ruLugemVUh85w4pHE1vMueT2tDhqhDVZKhBqrvFSTTEUfDQAVkVPsPNUi"
+      "wallet": "6Ppw...SmEy",
+      "solscanUrl": "https://solscan.io/tx/3oZGusvRDG2Pkcxudn7RTDb8rDsN34ZVroZoXsPc1kVST9JtsHkggNCLTwHY47Y9YpMg8Aay6a3YRxfXQ2GAL9Kn"
     },
     {
-      "ts": "2026-07-23T20:05:22.290Z",
+      "ts": "2026-07-23T20:08:05.040Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 2Bai...yUYk",
+      "label": "38.010833 pigeon → FVDq...BATX",
       "amountTokens": "38.010833",
-      "wallet": "2Bai...yUYk",
-      "solscanUrl": "https://solscan.io/tx/4NjupwG7fdiev13bVn1SKmqCMoLs5aSQweFEbDuaZ31dLU25d5Fyah9DBmbKM5JQsxLvnXdhXGYZGps6XBjUXA3i"
+      "wallet": "FVDq...BATX",
+      "solscanUrl": "https://solscan.io/tx/3SMVMmVapGDd5SsbUuqUymMWDF7Rs7NRKPreuWG4Zh8Az3UmcEDVcESNabeJkccvA3gUBs9Y2qcfPwdGT5EyHK6w"
     },
     {
-      "ts": "2026-07-23T20:05:21.468Z",
+      "ts": "2026-07-23T20:08:04.221Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 6wJ9...ot6d",
+      "label": "38.010833 pigeon → FdwY...WWEP",
       "amountTokens": "38.010833",
-      "wallet": "6wJ9...ot6d",
-      "solscanUrl": "https://solscan.io/tx/3S1bntyEyqvvWmse3y2uvy1ZqFq955U5yYE2AQgekaN1oUvcodYpX8SVyzMzdYqj4ekDFMKaZ7p7LSGnAYm2EUN"
+      "wallet": "FdwY...WWEP",
+      "solscanUrl": "https://solscan.io/tx/njqHViCcpGHGzMnwZ6ApLygm8VwoPR7ja6Xn7fhyR1Uftr1FfGVduuckYYUYkNckWj7HHAfeuL2zv4eRzJRJyEh"
     },
     {
-      "ts": "2026-07-23T20:05:20.683Z",
+      "ts": "2026-07-23T20:08:02.853Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 7a77...zsaM",
+      "label": "38.010833 pigeon → 2Wjv...sBbE",
       "amountTokens": "38.010833",
-      "wallet": "7a77...zsaM",
-      "solscanUrl": "https://solscan.io/tx/5Pjsd6GQoqwjpmfoAFvzYEFUsS7taKhNmirpRy7mz6H9ojGiVACqEsL9cBxYuneatqirptPUDzV2GzL1i8gUP8Z9"
+      "wallet": "2Wjv...sBbE",
+      "solscanUrl": "https://solscan.io/tx/sJSeDstzEiRvv27jSJdcXtU9Pn4gip2KZNpRRiRB6Ggp2B3ktBbdibRhnafXVVTFuLbX51Rjj4fadrYuGX8RUoT"
     },
     {
-      "ts": "2026-07-23T20:05:19.970Z",
+      "ts": "2026-07-23T20:08:01.954Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 7pVd...fu9B",
+      "label": "38.010833 pigeon → E7Ep...nubr",
       "amountTokens": "38.010833",
-      "wallet": "7pVd...fu9B",
-      "solscanUrl": "https://solscan.io/tx/4kKmB6oMEAhRUSDtBmTUU8Wdchi8yCAaK4Mph5yW9wA5Qrcvcb8dxLLeDhbuwP7dxQNsaQCXcNrJf2u8Gd2gyZUL"
+      "wallet": "E7Ep...nubr",
+      "solscanUrl": "https://solscan.io/tx/43ZGw5HooSGArz3Kt6B4d8NpyjcBAhGn6mGKstVNEZubLB8orFScCuLG9oYx3Sve2oMUmRyH8VRJyiNikfT4NJDt"
     },
     {
-      "ts": "2026-07-23T20:05:19.005Z",
+      "ts": "2026-07-23T20:07:59.895Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → 55Qz...4ReY",
+      "label": "38.010833 pigeon → 76UE...WGQY",
       "amountTokens": "38.010833",
-      "wallet": "55Qz...4ReY",
-      "solscanUrl": "https://solscan.io/tx/E323doxyK1mcnV3QMVZdF1cZ3qKjF8pJte2sA8SMz3tdwaMdCkAPNM5i88j81xMaGgRRNZikPa7KndNy9P15teU"
+      "wallet": "76UE...WGQY",
+      "solscanUrl": "https://solscan.io/tx/4rtyNGqmqxbczxTzcyYZVoNwNPFxxLZaNPbbXe33BixPNk37e4EZnQ4cynYJMsFUapPLtApooh4Fv7pW5toNgrQB"
     },
     {
-      "ts": "2026-07-23T20:05:18.195Z",
+      "ts": "2026-07-23T20:07:58.940Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → Cshb...T7ix",
+      "label": "38.010833 pigeon → Fbjj...geES",
       "amountTokens": "38.010833",
-      "wallet": "Cshb...T7ix",
-      "solscanUrl": "https://solscan.io/tx/5Vp7XmgvQ7gBvDcmayCu9w573GjC5cPTPnvA369QpHv5Lj8fGBtNFGXVjLdWFjBbCpZ3FujFLvRMwAe3A9W95WUM"
+      "wallet": "Fbjj...geES",
+      "solscanUrl": "https://solscan.io/tx/2vPEjhnF7kroNodVteQMxd2aRLVGR8p8xi4a5a8y9ikDBh6C154kXppXJj2NYuXgkHgtoZkpUJoJpYBsYvxmdhT8"
     },
     {
-      "ts": "2026-07-23T20:05:17.409Z",
+      "ts": "2026-07-23T20:07:57.926Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → GpG9...aQxM",
+      "label": "38.010833 pigeon → 4HMV...xT7Q",
       "amountTokens": "38.010833",
-      "wallet": "GpG9...aQxM",
-      "solscanUrl": "https://solscan.io/tx/16GZpmHr3ZK1djQUN8DZJtD5NTuL8Q42JR62keKNbhh24vTr3R57mzuWpqDWHdpqDvVWfjMh8GWrYAT2zj319pe"
+      "wallet": "4HMV...xT7Q",
+      "solscanUrl": "https://solscan.io/tx/5WEpfYDf3CmaCVoUSBD1WTYArnzVe1yuEWD7vLzFckuNeopm6GXvkQKgqhGV7UhBCk8EfNzihz9mcoBmV92viyHr"
     },
     {
-      "ts": "2026-07-23T20:05:16.336Z",
+      "ts": "2026-07-23T20:07:56.702Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → GuGi...skNp",
+      "label": "38.010833 pigeon → C5KM...U29Y",
       "amountTokens": "38.010833",
-      "wallet": "GuGi...skNp",
-      "solscanUrl": "https://solscan.io/tx/4dF3xn3omFPVYmVUJ163cy1GjDePg7ZEXZEzvsa9qw2VEXiqskgztxxFYUUWqZeAZFSPyrF5ZABGtr8vWVBqtBT1"
+      "wallet": "C5KM...U29Y",
+      "solscanUrl": "https://solscan.io/tx/4hp63fmCa6rp6YeMq4kRrveWih25WoGwhibrbBb2z6CC6bFjhMD1jTqW1CWGnkM55E6cHvad8H1guqXAKFZToeoP"
     },
     {
-      "ts": "2026-07-23T20:05:15.329Z",
+      "ts": "2026-07-23T20:07:55.882Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → CKL2...tQza",
+      "label": "38.010833 pigeon → CuHD...d3GQ",
       "amountTokens": "38.010833",
-      "wallet": "CKL2...tQza",
-      "solscanUrl": "https://solscan.io/tx/ffVU9bUZTJg1tujRLX1uMhJhpXW6Fxh83ddU9dgqB2GT2DFUEGpBKNjCqXZojiriiHPX7VTUXZ3G1y48XzQyhjG"
+      "wallet": "CuHD...d3GQ",
+      "solscanUrl": "https://solscan.io/tx/3mGPSZtMTGPGsfszzca9AxTzSyLHn4XjfWxTQf5aCcQyRzgYm7ff5zj1BURbzCFUt2ozKAZMWFREpRN19WT8yVo3"
     },
     {
-      "ts": "2026-07-23T20:05:14.498Z",
+      "ts": "2026-07-23T20:07:55.153Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → AtrQ...1nsY",
+      "label": "38.010833 pigeon → 3pPt...uM8s",
       "amountTokens": "38.010833",
-      "wallet": "AtrQ...1nsY",
-      "solscanUrl": "https://solscan.io/tx/3ShHQf7abABd2NNBHQA4LB9zGRCpXNTYCPVx4b7j2b8V1Bp5QrVp7sYdXzs3V1Tgwo7Jf2ea9yjKG1LdjmKdwMnP"
+      "wallet": "3pPt...uM8s",
+      "solscanUrl": "https://solscan.io/tx/4LkGKydVAjXJCaxZuyaunoGGqr1RFKv57M6JZK5Yxsw1Aib1sfrsFEGzbnqs2sRbFzdpsk3BZyoyGwbk9jxEBsSF"
     },
     {
-      "ts": "2026-07-23T20:05:13.620Z",
+      "ts": "2026-07-23T20:07:53.367Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → Awdf...cjpb",
+      "label": "38.010833 pigeon → CMHs...yvvX",
       "amountTokens": "38.010833",
-      "wallet": "Awdf...cjpb",
-      "solscanUrl": "https://solscan.io/tx/5x7fev58r8gyeXUhTPeNZFtKUjkRh1fwnkPaU7haZovgdHMSvyeFTmnitFXExJZBdooxLoLH9K1DmsHFMpSgEBk5"
+      "wallet": "CMHs...yvvX",
+      "solscanUrl": "https://solscan.io/tx/2UTBSrCR42NHieYU2fzWtcUh3JpsfW4aCvynAewYqEdHWFZxMoGr5G8mm5AJYUnwxPvHWnEjk588j69ukvx7fwo"
     },
     {
-      "ts": "2026-07-23T20:05:12.785Z",
+      "ts": "2026-07-23T20:07:52.565Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → BsEt...tScZ",
+      "label": "38.010833 pigeon → FRee...c4DX",
       "amountTokens": "38.010833",
-      "wallet": "BsEt...tScZ",
-      "solscanUrl": "https://solscan.io/tx/m1T2ZhHZBW9A5VkDQPJ5oZ1uarFpq1okdnkPoDdXBuo8e6nNzrEQwL3DQMV6Gp1vLLMp23wHAXySt8C7eYfKQmB"
+      "wallet": "FRee...c4DX",
+      "solscanUrl": "https://solscan.io/tx/bFFY8ZVE7gSR33njzTzAsoMCSvo4V4AfxVj2ZuE6oRcmpXmQfazZv4gbM1i2xA5CfHV5E7s45p5f5kxkgQwsPPj"
     },
     {
-      "ts": "2026-07-23T20:05:11.979Z",
+      "ts": "2026-07-23T20:07:51.172Z",
       "kind": "daily",
-      "label": "38.010833 pigeon → AjU5...EtuU",
+      "label": "38.010833 pigeon → 2D3s...FU5H",
       "amountTokens": "38.010833",
-      "wallet": "AjU5...EtuU",
-      "solscanUrl": "https://solscan.io/tx/XXk9BmAyDE4hwcScicKFGZ9p6Ahz5TsNoGgRhPiqS9vBKeV5qz6wBnXfVbwEF4suWCB3NTzbJ2dJZd8CPLCMxCV"
+      "wallet": "2D3s...FU5H",
+      "solscanUrl": "https://solscan.io/tx/3rgeVyFf2uBN15xbp8F8WPzKug6xTy8RLJpD2TgsgrC92Zg38qRkhcLwyPL3NrmEuXvHy2upZFTM3kqsR4Vg2eE9"
     }
   ],
   "foreignTokens": [
@@ -371,9 +371,9 @@
     }
   ],
   "holderCount": 1015,
-  "solBalance": 2.527881627,
-  "pigeonBalanceTokens": "124170134.151705",
-  "allTimeDistributedTokens": "9836929.187569",
+  "solBalance": 2.527643895,
+  "pigeonBalanceTokens": "124168461.675053",
+  "allTimeDistributedTokens": "9838563.653388",
   "curveHeadroomTokens": "0",
   "next941": "2026-07-24T13:41:00.000Z"
 }
