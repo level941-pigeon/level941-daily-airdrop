@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T15:27:48.565Z",
+  "generatedAt": "2026-07-23T15:29:05.134Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -324,6 +324,15 @@
     }
   ],
   "foreignTokens": [
+    {
+      "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "amountTokens": "5741.865386",
+      "valueUsd": null,
+      "status": "pending-screen",
+      "reason": "arrived since the last pipeline run, not yet screened",
+      "coolingSecondsRemaining": null,
+      "solscanUrl": "https://solscan.io/token/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+    },
     {
       "mint": "9gyfbPVwwZx4y1hotNSLcqXCQNpNqqz6ZRvo8yTLpump",
       "amountTokens": "0.00005",
