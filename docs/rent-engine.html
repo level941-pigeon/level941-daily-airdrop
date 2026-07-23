@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>level941 — rent engine</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Ccircle cx='8' cy='16' r='7' fill='%237c5cff'/%3E%3Cpath d='M24 4 L48 16 L24 28' stroke='%23e7e9ea' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16181b; --panel: #1e2124; --panel-2: #262a2e; --border: #34393e;
+    --text: #e7e9ea; --muted: #8b9096;
+    --iri-1: #00d9a3; --iri-2: #7c5cff; --iri-3: #ff5ec4; --iri-4: #4dc9ff;
+    --iridescent: linear-gradient(115deg, var(--iri-1) 0%, var(--iri-2) 30%, var(--iri-3) 60%, var(--iri-4) 85%, var(--iri-1) 100%);
+    --warn: #ff5ec4;
+    --font-display: "Unbounded", "Fraunces", Georgia, serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-ui); line-height: 1.5; padding: 24px 16px 72px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--iri-4); outline-offset: 2px; }
+
+  .site-header { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 22px; border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .mark { width: 34px; height: 17px; flex-shrink: 0; }
+  .mark-dot { fill: var(--iri-2); }
+  .mark-chev { stroke: var(--text); }
+  .wordmark { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+
+  .not-live-banner {
+    background: var(--panel);
+    border: 1px solid var(--warn);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--text);
+  }
+  .not-live-banner b { color: var(--warn); }
+
+  .page-sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 22px; }
+
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  section h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; margin: 0 0 4px; color: var(--text); display: flex; align-items: center; gap: 9px; }
+  section h2::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--iridescent); background-size: 300% 100%; flex-shrink: 0; }
+  section .section-sub { color: var(--muted); font-size: 0.8rem; margin: 0 0 14px; }
+
+  button.primary {
+    font-family: var(--font-ui); font-weight: 600; font-size: 0.9rem;
+    background: var(--iri-2); color: white; border: none; border-radius: 8px;
+    padding: 11px 20px; cursor: pointer;
+  }
+  button.primary:disabled { background: var(--panel-2); color: var(--muted); cursor: not-allowed; }
+  button.secondary {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 14px; cursor: pointer;
+  }
+
+  .wallet-line { font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); margin-top: 10px; }
+
+  .position-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+  .position-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+    padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px;
+    font-size: 0.84rem;
+  }
+  .position-row .mint { font-family: var(--font-mono); color: var(--text); }
+  .position-row .rent { font-family: var(--font-mono); color: var(--iri-1); font-size: 0.78rem; }
+
+  .choice-row { display: flex; gap: 10px; margin: 10px 0 16px; }
+  .choice-row label {
+    display: flex; align-items: center; gap: 6px; font-size: 0.84rem;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; cursor: pointer;
+  }
+
+  .fee-breakdown {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin: 14px 0; font-family: var(--font-mono); font-size: 0.84rem;
+  }
+  .fee-breakdown .row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .fee-breakdown .row.total { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 8px; color: var(--text); font-weight: 600; }
+  .fee-breakdown .row .v { color: var(--iri-1); }
+
+  .irreversible-note {
+    background: var(--panel-2); border: 1px solid var(--warn); border-radius: 8px;
+    padding: 12px 14px; margin: 14px 0; font-size: 0.84rem; color: var(--text);
+  }
+  .irreversible-note b { color: var(--warn); }
+
+  .empty-state { color: var(--muted); font-size: 0.85rem; padding: 24px 4px; text-align: center; }
+  .status-line { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin-top: 12px; white-space: pre-wrap; word-break: break-all; }
+  footer { color: var(--muted); font-size: 0.76rem; text-align: center; margin-top: 28px; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <svg class="mark" viewBox="0 0 64 32" aria-hidden="true">
+        <circle class="mark-dot" cx="8" cy="16" r="7"/>
+        <path class="mark-chev" d="M24 4 L48 16 L24 28" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="wordmark">level941</span>
+    </a>
+  </header>
+
+  <div class="not-live-banner">
+    <b>NOT LIVE.</b> This page is not linked from the site and is not announced anywhere.
+    It has not been tested with a real wallet signature. Do not connect a wallet holding
+    anything you care about until this banner is gone.
+  </div>
+
+  <p class="page-sub">reclaim the SOL rent locked in your dead token accounts. non-custodial -- you sign, you send, nothing here ever holds your keys.</p>
+
+  <section>
+    <h2>connect</h2>
+    <p class="section-sub">Phantom-compatible wallets only for now (checks <code>window.phantom.solana</code>).</p>
+    <button class="primary" id="connectBtn">connect wallet</button>
+    <div class="wallet-line" id="walletLine"></div>
+  </section>
+
+  <section id="positionsSection" style="display:none;">
+    <h2>your dead positions</h2>
+    <p class="section-sub">checked against the certified registry only -- <a href="graveyard.json">graveyard.json</a>.</p>
+    <div class="position-list" id="positionList"></div>
+  </section>
+
+  <section id="buildSection" style="display:none;">
+    <h2>build the batch</h2>
+    <p class="section-sub">one transaction: burn or donate each position, close the account, reclaim the rent.</p>
+    <div class="choice-row">
+      <label><input type="radio" name="disposal" value="burn" checked /> burn (default)</label>
+      <label><input type="radio" name="disposal" value="donate" /> donate to the box</label>
+    </div>
+    <div class="fee-breakdown" id="feeBreakdown"></div>
+    <div class="irreversible-note">
+      <b>This cannot be undone.</b> Burning destroys the tokens permanently. Closing the account is
+      permanent. Signing this transaction is your decision alone -- review every line before approving
+      it in your wallet.
+    </div>
+    <button class="primary" id="buildBtn">build transaction</button>
+    <div class="status-line" id="buildStatus"></div>
+  </section>
+
+  <footer>rent-exempt minimum queried live per account, never assumed. RENT_FEE_PCT and the fuel-tank address are visible in this page's source -- nothing hidden.</footer>
+</div>
+
+<script type="module">
+import {
+  Connection, PublicKey, Transaction, SystemProgram,
+} from 'https://esm.sh/@solana/web3.js@1.98.0?bundle';
+import {
+  createBurnInstruction, createCloseAccountInstruction, createTransferInstruction,
+  TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID,
+} from 'https://esm.sh/@solana/spl-token@0.4.9?bundle';
+
+// Deliberately the PUBLIC endpoint, never the project's own RPC_URL --
+// that value is private/paid and must never ship in client-side code that
+// anyone can read. Same principle as assertNoSecrets() elsewhere in this
+// codebase, applied here by construction rather than by a runtime check.
+const RPC_ENDPOINT = 'https://api.mainnet-beta.solana.com';
+const connection = new Connection(RPC_ENDPOINT, 'confirmed');
+
+// TODO before this goes live: confirm this is the intended fee-collection
+// address. Currently the existing box/drop wallet -- reusing it rather
+// than introducing an unconfirmed new address, but this should be an
+// explicit decision, not an assumption baked in silently.
+const FUEL_TANK_PUBKEY = new PublicKey('64zxHX4ar1gV5vYdmDqNm9PbqtxAJdMZvLzL5efaYPX8');
+const RENT_FEE_PCT = 20;
+
+let wallet = null;
+let deadPositions = []; // { mint, pubkey, programId, amount, decimals, rentLamports }
+
+function fmtSol(lamports) {
+  return (Number(lamports) / 1e9).toFixed(6) + ' SOL';
+}
+
+async function connectWallet() {
+  const provider = window.phantom?.solana ?? window.solana;
+  if (!provider?.isPhantom) {
+    document.getElementById('walletLine').textContent =
+      'No Phantom-compatible wallet found. Install Phantom or another wallet exposing window.phantom.solana.';
+    return;
+  }
+  const resp = await provider.connect();
+  wallet = { provider, pubkey: new PublicKey(resp.publicKey.toString()) };
+  document.getElementById('walletLine').textContent = 'connected: ' + wallet.pubkey.toBase58();
+  await loadDeadPositions();
+}
+
+async function loadRegistry() {
+  const res = await fetch('graveyard.json', { cache: 'no-store' });
+  if (!res.ok) throw new Error('could not load graveyard.json');
+  return res.json();
+}
+
+async function loadDeadPositions() {
+  const section = document.getElementById('positionsSection');
+  const list = document.getElementById('positionList');
+  section.style.display = 'block';
+  list.innerHTML = '<div class="empty-state">checking registry and your wallet…</div>';
+
+  const registry = await loadRegistry();
+  const confirmedMints = (registry.entries || []).map((e) => e.mint);
+
+  if (confirmedMints.length === 0) {
+    list.innerHTML = '<div class="empty-state">the registry has no CONFIRMED entries yet. nothing to check against -- this is expected right now, not an error.</div>';
+    return;
+  }
+
+  deadPositions = [];
+  for (const mint of confirmedMints) {
+    for (const programId of [TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID]) {
+      const resp = await connection.getParsedTokenAccountsByOwner(wallet.pubkey, { mint: new PublicKey(mint), programId });
+      for (const { pubkey, account } of resp.value) {
+        const info = account.data.parsed.info;
+        const amount = BigInt(info.tokenAmount.amount);
+        if (amount === 0n) continue;
+        const rentLamports = await connection.getMinimumBalanceForRentExemption(account.data.space ?? 165);
+        deadPositions.push({ mint, pubkey, programId, amount, decimals: info.tokenAmount.decimals, rentLamports });
+      }
+    }
+  }
+
+  if (deadPositions.length === 0) {
+    list.innerHTML = '<div class="empty-state">no certified-dead positions found in this wallet.</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  for (const p of deadPositions) {
+    const row = document.createElement('div');
+    row.className = 'position-row';
+    row.innerHTML = `<div class="mint">${p.mint.slice(0,4)}...${p.mint.slice(-4)}</div><div class="rent">${fmtSol(p.rentLamports)} reclaimable</div>`;
+    list.appendChild(row);
+  }
+  renderFeeBreakdown();
+  document.getElementById('buildSection').style.display = 'block';
+}
+
+function renderFeeBreakdown() {
+  const total = deadPositions.reduce((s, p) => s + p.rentLamports, 0);
+  const fee = Math.floor(total * RENT_FEE_PCT / 100);
+  const toYou = total - fee;
+  document.getElementById('feeBreakdown').innerHTML = `
+    <div class="row"><span>positions to close</span><span class="v">${deadPositions.length}</span></div>
+    <div class="row"><span>total rent reclaimed</span><span class="v">${fmtSol(total)}</span></div>
+    <div class="row"><span>fee to the box (${RENT_FEE_PCT}%)</span><span class="v">${fmtSol(fee)}</span></div>
+    <div class="row total"><span>you receive</span><span class="v">${fmtSol(toYou)}</span></div>
+  `;
+}
+
+async function buildAndSend() {
+  const disposal = document.querySelector('input[name=disposal]:checked').value;
+  const status = document.getElementById('buildStatus');
+  status.textContent = 'building transaction...';
+
+  try {
+    const tx = new Transaction();
+    for (const p of deadPositions) {
+      if (disposal === 'burn') {
+        tx.add(createBurnInstruction(p.pubkey, new PublicKey(p.mint), wallet.pubkey, p.amount, [], p.programId));
+      } else {
+        // Donate-to-box: requires the box to already hold (or have created)
+        // an associated token account for this mint. NOT verified here --
+        // this path is untested and should not be trusted until it's been
+        // proven against a real box ATA for a real mint on devnet.
+        status.textContent = 'donate-to-box is not implemented yet (needs the box\'s ATA for this mint verified first). Use burn.';
+        return;
+      }
+      tx.add(createCloseAccountInstruction(p.pubkey, wallet.pubkey, wallet.pubkey, [], p.programId));
+    }
+
+    const total = deadPositions.reduce((s, p) => s + p.rentLamports, 0);
+    const fee = Math.floor(total * RENT_FEE_PCT / 100);
+    if (fee > 0) {
+      tx.add(SystemProgram.transfer({ fromPubkey: wallet.pubkey, toPubkey: FUEL_TANK_PUBKEY, lamports: fee }));
+    }
+
+    tx.feePayer = wallet.pubkey;
+    const { blockhash } = await connection.getLatestBlockhash();
+    tx.recentBlockhash = blockhash;
+
+    status.textContent = 'awaiting signature in wallet...';
+    const signed = await wallet.provider.signAndSendTransaction(tx);
+    status.textContent = 'sent: ' + (signed.signature ?? JSON.stringify(signed));
+  } catch (e) {
+    status.textContent = 'error (nothing was lost if this happened before you approved in your wallet): ' + (e?.message ?? String(e));
+  }
+}
+
+document.getElementById('connectBtn').addEventListener('click', () => connectWallet().catch((e) => {
+  document.getElementById('walletLine').textContent = 'connect failed: ' + (e?.message ?? String(e));
+}));
+document.getElementById('buildBtn').addEventListener('click', () => buildAndSend());
+document.querySelectorAll('input[name=disposal]').forEach((r) => r.addEventListener('change', renderFeeBreakdown));
+</script>
+</body>
+</html>
