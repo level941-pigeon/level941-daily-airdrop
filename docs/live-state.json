@@ -1,7 +1,15 @@
 {
-  "generatedAt": "2026-07-23T20:15:27.129Z",
+  "generatedAt": "2026-07-23T20:16:43.844Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
+    {
+      "ts": "2026-07-23T20:15:32.421Z",
+      "kind": "daily",
+      "label": "38.010833 pigeon → 8LTk...6Qdt",
+      "amountTokens": "38.010833",
+      "wallet": "8LTk...6Qdt",
+      "solscanUrl": "https://solscan.io/tx/64ou8bonBtwgTaEH5ed8vjyY3j62yqengYs34ifj3TDKgbxYB9UrZxQb1bBFhLFd2o5f4JbJS8Z7WQWwFo2ugC14"
+    },
     {
       "ts": "2026-07-23T20:14:42.568Z",
       "kind": "daily",
@@ -313,14 +321,6 @@
       "amountTokens": "38.010833",
       "wallet": "JBpq...Rxi7",
       "solscanUrl": "https://solscan.io/tx/4LKHChPtG7JjA7omwZJh3zk9EBQkjCpBZSKyGteLUTMrj85JwJNWSEYggk27Ls44jaDB4Akn7ztTZpV9GLeA6a8Q"
-    },
-    {
-      "ts": "2026-07-23T20:13:35.581Z",
-      "kind": "daily",
-      "label": "38.010833 pigeon → 7awE...vG9m",
-      "amountTokens": "38.010833",
-      "wallet": "7awE...vG9m",
-      "solscanUrl": "https://solscan.io/tx/25TyXqEDy4HxHMtiLVZZQRbb8V1T5k1Pwes7jtvEZiwTAWe1dzJMrThcnMaxZxakvh1tYjFDjaYjQCSyu8WkLUb5"
     }
   ],
   "foreignTokens": [
@@ -371,9 +371,9 @@
     }
   ],
   "holderCount": 1015,
-  "solBalance": 2.526817236,
-  "pigeonBalanceTokens": "124162649.928752",
-  "allTimeDistributedTokens": "9844375.399689",
+  "solBalance": 2.526811833,
+  "pigeonBalanceTokens": "124162611.917919",
+  "allTimeDistributedTokens": "9844413.410522",
   "curveHeadroomTokens": "0",
   "next941": "2026-07-24T13:41:00.000Z"
 }
