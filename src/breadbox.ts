@@ -146,13 +146,20 @@ function linkViolations(e: QueueEntry): string[] {
 // Best-effort 280-char mirror for hand-copying to @level941. Not a
 // paraphrase engine -- straightforward truncation-to-fit in the same
 // voice, not a rewrite. A human reviews before it ever leaves the queue.
+//
+// The link is load-bearing (doctrine requires one on every post) and
+// must never be the part that gets cut -- truncating the prose and
+// leaving the URL intact beats a shorter caption with a dead link.
 function xMirrorFor(e: QueueEntry): string {
-  const raw =
+  const link = e.postType === 'flight-orders' ? (e.fact!.match(/https?:\/\/\S+/) ?? [''])[0] : (e.evidenceLink ?? '');
+  const prose =
     e.postType === 'flight-orders'
-      ? `${e.angle} ${e.fact}`
-      : `${e.status} ${e.title} -- ${e.body} ${e.evidenceLink}`;
-  const collapsed = raw.replace(/\s+/g, ' ').trim();
-  return collapsed.length <= 280 ? collapsed : collapsed.slice(0, 277) + '...';
+      ? `${e.angle} ${e.fact!.replace(link, '').trim()}`
+      : `${e.status} ${e.title} -- ${e.body}`;
+  const collapsedProse = prose.replace(/\s+/g, ' ').trim();
+  const budget = 280 - link.length - 1; // 1 for the separating space
+  const truncatedProse = collapsedProse.length <= budget ? collapsedProse : collapsedProse.slice(0, Math.max(0, budget - 3)) + '...';
+  return `${truncatedProse} ${link}`.trim();
 }
 
 // Reusable entry point for auto-draft triggers elsewhere in the codebase
