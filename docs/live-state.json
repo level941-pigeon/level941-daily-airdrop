@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T13:40:27.333Z",
+  "generatedAt": "2026-07-23T13:41:43.844Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
     {
@@ -345,17 +345,17 @@
     {
       "mint": "A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump",
       "amountTokens": "0.00005",
-      "valueUsd": 237.736421,
-      "status": "ready",
-      "reason": "cleared, worth ~$237.74",
+      "valueUsd": null,
+      "status": "pending-value",
+      "reason": "no sellable quote yet, retrying next run",
       "coolingSecondsRemaining": 0,
       "solscanUrl": "https://solscan.io/token/A5mhDhT6R9pZ8KTeCVNrckJ4JMjpasySwe4b69Yhpump"
     }
   ],
-  "holderCount": 1034,
+  "holderCount": 1015,
   "solBalance": 0.313108041,
   "pigeonBalanceTokens": "103562054.965395",
   "allTimeDistributedTokens": "5562944.034605",
   "curveHeadroomTokens": "0",
-  "next941": "2026-07-23T13:41:00.000Z"
+  "next941": "2026-07-24T13:41:00.000Z"
 }
