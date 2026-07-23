@@ -8,6 +8,13 @@
 // 2. AutomaticallyInstallMacOSUpdates reads back to 1 (re-armed after being
 //    turned off) -> alert, since an unattended restart-install is exactly
 //    what breaks the poller and the daily run.
+//
+// Ops-class alerts (this file's whole job) never touch the public webhook.
+// They always write to data/logs/ops-alerts.log; they additionally post to
+// OPS_WEBHOOK_URL only once that's actually set in .env -- founder's
+// choice, later or never. Machine internals (daemon state, OS config keys,
+// exit codes) reach the public channel only inside a human-approved Bread
+// Box entry, never automatically.
 
 import 'dotenv/config';
 import { execFileSync } from 'node:child_process';
@@ -17,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MARKER = path.join(ROOT, 'data', 'logs', 'send-auto-last-success.txt');
+const OPS_LOG = path.join(ROOT, 'data', 'logs', 'ops-alerts.log');
 
 function todayLocal(): string {
   const now = new Date();
@@ -25,9 +33,12 @@ function todayLocal(): string {
 
 async function alert(message: string): Promise<void> {
   console.log(`deadman-check: ALERT: ${message}`);
-  const url = process.env.DISCORD_PUBLIC_WEBHOOK_URL;
+  fs.mkdirSync(path.dirname(OPS_LOG), { recursive: true });
+  fs.appendFileSync(OPS_LOG, `${new Date().toISOString()} ${message}\n`);
+
+  const url = process.env.OPS_WEBHOOK_URL;
   if (!url) {
-    console.log('deadman-check: DISCORD_PUBLIC_WEBHOOK_URL not set, cannot notify -- this alert only reached this log.');
+    console.log('deadman-check: OPS_WEBHOOK_URL not set, logged to ops-alerts.log only.');
     return;
   }
   try {
@@ -37,10 +48,10 @@ async function alert(message: string): Promise<void> {
       body: JSON.stringify({ content: message }),
     });
     if (!res.ok) {
-      console.log(`deadman-check: webhook responded ${res.status} ${res.statusText}`);
+      console.log(`deadman-check: ops webhook responded ${res.status} ${res.statusText}`);
     }
   } catch (e) {
-    console.log(`deadman-check: webhook post failed: ${e instanceof Error ? e.message : String(e)}`);
+    console.log(`deadman-check: ops webhook post failed: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 

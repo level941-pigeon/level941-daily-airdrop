@@ -66,6 +66,28 @@ const PROFIT_GUARANTEE_PATTERNS = [
 // tier and for the same reason.
 const PROFIT_GUARANTEE_WORD_PATTERNS = ['nfa', 'roi'];
 
+// Machine internals -- daemon/process plumbing, OS configuration keys --
+// reach the public channel only inside a human-approved entry (someone
+// deliberately writing "we fixed a launchd bug" is fine; the ops alert
+// text itself leaking verbatim into a public post is not). This is a
+// blocklist of infrastructure vocabulary, not a claim that it's exhaustive.
+const MACHINE_INTERNALS_PATTERNS = [
+  'launchd',
+  'launchctl',
+  'launchdaemon',
+  'launchagent',
+  'com.level941.',
+  'com.apple.',
+  'ex_config',
+  'exit code',
+  'tcc',
+  'crontab',
+  'systemd',
+  'automaticallyinstallmacosupdates',
+  'softwareupdate',
+  'sudo ',
+];
+
 function envKeyNames(): string[] {
   const envPath = path.join(ROOT, '.env');
   if (!fs.existsSync(envPath)) return [];
@@ -163,6 +185,9 @@ export function lintDraft(text: string): string[] {
   }
   if (/@[a-zA-Z0-9_]{2,}/.test(text)) {
     violations.push('contains an @-mention -- review for real-world identity reference before approving');
+  }
+  for (const p of MACHINE_INTERNALS_PATTERNS) {
+    if (lower.includes(p)) violations.push(`contains machine/daemon internals: "${p.trim()}"`);
   }
   violations.push(...checkCopyLaw(text));
 
