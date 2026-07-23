@@ -73,39 +73,43 @@ function releaseLock(): void {
 // Auto-draft is best-effort and never allowed to affect the run it's
 // reporting on -- any failure here is caught and logged, not thrown, so a
 // broken draft can never make a real send-auto run look like it failed.
-function draftPostRunEvent(succeeded: boolean, reason: string): void {
+// Evidence link points at the board, not the local log path -- doctrine
+// requires a real http(s) link the chain or the board backs, not a
+// filesystem reference nobody outside this machine can open.
+async function draftPostRunEvent(succeeded: boolean, reason: string): Promise<void> {
   try {
-    autoDraftWorkflow(
+    await autoDraftWorkflow(
       succeeded ? 'shipped.' : 'building.',
       "today's run",
       succeeded
         ? `The scheduled daily run completed (${reason}).`
         : `The scheduled daily run failed and will retry on the next trigger (${reason}).`,
-      `data/logs/auto.log, ${new Date().toISOString()}`
+      'https://level941.live/observatory.html',
+      'post-run'
     );
   } catch (e) {
     console.log(`scheduler-guard: auto-draft failed, not fatal to the run: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 
-function runSendAuto(reason: string): void {
+async function runSendAuto(reason: string): Promise<void> {
   console.log(`scheduler-guard: ${new Date().toISOString()} running send-auto (${reason})`);
   try {
     execFileSync('npm', ['run', 'send-auto'], { stdio: 'inherit', cwd: ROOT });
     fs.mkdirSync(path.dirname(MARKER), { recursive: true });
     fs.writeFileSync(MARKER, `${todayLocal()} ${new Date().toISOString()} (${reason})\n`);
     console.log('scheduler-guard: send-auto completed, marker written.');
-    draftPostRunEvent(true, reason);
+    await draftPostRunEvent(true, reason);
   } catch (e) {
     console.log(
       `scheduler-guard: send-auto FAILED, marker NOT written, next trigger will retry. ${e instanceof Error ? e.message : String(e)}`
     );
     process.exitCode = 1;
-    draftPostRunEvent(false, reason);
+    await draftPostRunEvent(false, reason);
   }
 }
 
-function main(): void {
+async function main(): Promise<void> {
   const trigger = process.argv[2] === 'catchup' ? 'catchup' : 'scheduled';
 
   if (alreadySucceededToday()) {
@@ -121,10 +125,13 @@ function main(): void {
     return;
   }
   try {
-    runSendAuto(trigger === 'catchup' ? 'catch-up on load, past 9:41 with no success marker for today' : 'scheduled 9:41 trigger');
+    await runSendAuto(trigger === 'catchup' ? 'catch-up on load, past 9:41 with no success marker for today' : 'scheduled 9:41 trigger');
   } finally {
     releaseLock();
   }
 }
 
-main();
+main().catch((e) => {
+  console.error('scheduler-guard fatal error:', e instanceof Error ? e.message : String(e));
+  process.exitCode = 1;
+});

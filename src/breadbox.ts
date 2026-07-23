@@ -27,12 +27,28 @@
 // Every post in every voice carries at least one link the chain or the
 // board backs -- enforced at draft time, not just requested in prose.
 //
-// Nothing auto-publishes. Draft, then a human approves, and approval
-// posts in the same step. The linter runs at draft time and again at
-// approval time -- a failure at either point hard-fails, no soft-warn.
-// Ops-class alerts (deadman, toggle, fuel, errors) never reach any of
-// this -- see deadman-check.ts, which logs to data/logs/ops-alerts.log
-// and only additionally posts if OPS_WEBHOOK_URL is ever set.
+// Nothing auto-publishes by default. Draft, then a human approves, and
+// approval posts in the same step. The linter runs at draft time and
+// again at approval time -- a failure at either point hard-fails, no
+// soft-warn. Ops-class alerts (deadman, toggle, fuel, errors) never
+// reach any of this -- see deadman-check.ts, which logs to
+// data/logs/ops-alerts.log and only additionally posts if
+// OPS_WEBHOOK_URL is ever set.
+//
+// AUTOPILOT AMENDMENT (founder-ordered, narrowly scoped): when
+// BREADBOX_AUTOPILOT=true in .env, Class A entries -- ONLY entries
+// produced by autoDraftWorkflow() from a real machine-verifiable trigger
+// (post-commit, post-run) -- post immediately instead of queueing,
+// still subject to the full linter (including BLOCKED: SECURITY), the
+// mandatory-link check, and the shared workflow 3/day cap. Every
+// autopilot post is appended to data/logs/breadbox-posted.log (trigger +
+// final text) as a post-review audit trail. Class B -- flight-orders,
+// weekly-winner, and anything drafted through the manual `draft`
+// command, which includes any hand-written workflow entry -- stays
+// permanently approval-gated regardless of this flag; autopilot only
+// ever touches the autoDraftWorkflow() code path, never cmdDraft(). The
+// machine never approves its own words into the gated class -- that
+// boundary is enforced in code, not just policy.
 //
 // Every approved workflow/flight-orders entry also generates a
 // 280-character X-ready mirror in the same voice, queued alongside the
@@ -53,6 +69,8 @@ import { fileURLToPath } from 'node:url';
 import { lintDraft } from './breadbox-lint.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const POSTED_LOG = path.join(ROOT, 'data', 'logs', 'breadbox-posted.log');
+const AUTOPILOT_ON = process.env.BREADBOX_AUTOPILOT === 'true';
 const QUEUE_PATH = path.join(ROOT, 'data', 'breadbox-queue.json');
 const VALID_STATUSES = ['shipped.', 'building.', 'testing.', 'planned.'];
 // Distinct embed colors per voice are the "visually distinct" mechanism --
@@ -162,13 +180,27 @@ function xMirrorFor(e: QueueEntry): string {
   return `${truncatedProse} ${link}`.trim();
 }
 
+function appendPostedLog(trigger: string, entry: QueueEntry): void {
+  fs.mkdirSync(path.dirname(POSTED_LOG), { recursive: true });
+  fs.appendFileSync(
+    POSTED_LOG,
+    `${new Date().toISOString()} trigger=${trigger} id=${entry.id}\n${renderText(entry)}\n---\n`
+  );
+}
+
 // Reusable entry point for auto-draft triggers elsewhere in the codebase
 // (e.g. scheduler-guard.ts after a send-auto run, or the post-commit hook
-// for completed-work markers). Draft-only, by construction -- this never
-// calls postToDiscord, only saveQueue. Returns null (and logs) instead of
-// throwing on a lint/link failure, so a caller never lets a bad auto-draft
-// take down the real work it's reporting on.
-export function autoDraftWorkflow(status: string, title: string, body: string, evidence: string): string | null {
+// for completed-work markers). `trigger` is a short machine-readable label
+// ("post-run", "post-commit") used only for the audit log.
+//
+// This is the ONLY code path autopilot ever touches (see the module
+// header) -- when BREADBOX_AUTOPILOT=true and the entry clears the full
+// linter, the mandatory-link check, and the shared workflow cap, it posts
+// immediately and logs to data/logs/breadbox-posted.log. Any failure at
+// any point downgrades to a normal queued draft rather than throwing --
+// this must never take down the real work (a send-auto run, a commit) it
+// reports on, autopilot or not.
+export async function autoDraftWorkflow(status: string, title: string, body: string, evidence: string, trigger = 'unspecified'): Promise<string | null> {
   if (!VALID_STATUSES.includes(status)) {
     console.log(`breadbox auto-draft skipped: invalid status "${status}"`);
     return null;
@@ -184,7 +216,34 @@ export function autoDraftWorkflow(status: string, title: string, body: string, e
     return null;
   }
   entry.xMirror = xMirrorFor(entry);
+
   const q = loadQueue();
+
+  if (AUTOPILOT_ON) {
+    const postedToday = postedTodayCountFor(q, 'workflow');
+    if (postedToday < DAILY_CAP.workflow) {
+      try {
+        await postToDiscord(entry);
+        entry.state = 'posted';
+        entry.decidedAt = new Date().toISOString();
+        entry.postedAt = new Date().toISOString();
+        q.push(entry);
+        saveQueue(q);
+        publishPublicMirror(q);
+        appendPostedLog(trigger, entry);
+        console.log(`breadbox: AUTOPILOT posted ${entry.id} [workflow] ${status} ${title}`);
+        return entry.id;
+      } catch (e) {
+        console.log(`breadbox: autopilot post failed, falling back to queued draft: ${e instanceof Error ? e.message : String(e)}`);
+        entry.state = 'draft';
+        entry.decidedAt = null;
+        entry.postedAt = null;
+      }
+    } else {
+      console.log(`breadbox: autopilot cap reached (${DAILY_CAP.workflow}/day), falling back to queued draft.`);
+    }
+  }
+
   q.push(entry);
   saveQueue(q);
   console.log(`breadbox: auto-drafted ${entry.id} [workflow] ${status} ${title}`);

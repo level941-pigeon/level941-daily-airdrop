@@ -26,7 +26,7 @@ function githubCommitUrl(hash: string): string | null {
   }
 }
 
-function main(): void {
+async function main(): Promise<void> {
   const hash = git(['rev-parse', 'HEAD']);
   const subject = git(['log', '-1', '--format=%s']);
 
@@ -40,7 +40,9 @@ function main(): void {
     return;
   }
 
-  autoDraftWorkflow('testing.', subject.slice(0, 80), `Committed: ${subject}`, url);
+  await autoDraftWorkflow('testing.', subject.slice(0, 80), `Committed: ${subject}`, url, 'post-commit');
 }
 
-main();
+main().catch((e) => {
+  console.error('post-commit-draft error:', e instanceof Error ? e.message : String(e));
+});
