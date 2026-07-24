@@ -1,7 +1,71 @@
 {
-  "generatedAt": "2026-07-24T13:52:14.429Z",
+  "generatedAt": "2026-07-24T13:53:31.253Z",
   "rulesetId": "v1-2026-07",
   "recentEvents": [
+    {
+      "ts": "2026-07-24T13:53:30.960Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 3iFT...yAyJ",
+      "amountTokens": "201.772966",
+      "wallet": "3iFT...yAyJ",
+      "solscanUrl": "https://solscan.io/tx/5M3kB5Gd2Mzni72YaAA1yQtoxWDkaKwbvh5KQbRxC4tACHAn4jQvzrUgjkLHV1ySAnKMtzTbgbVa4EMSHnoXsdFU"
+    },
+    {
+      "ts": "2026-07-24T13:53:30.103Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 21bK...AhSa",
+      "amountTokens": "201.772966",
+      "wallet": "21bK...AhSa",
+      "solscanUrl": "https://solscan.io/tx/57zJ9E51LhJyrR8oRZU5vffsudMeDuyEiXmbfbenv94hdYVLky1GXLXnMFqqG5ChzBNPyXBUgbmZJ4mwYrL9QVZW"
+    },
+    {
+      "ts": "2026-07-24T13:53:28.977Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → C1c5...HGbP",
+      "amountTokens": "201.772966",
+      "wallet": "C1c5...HGbP",
+      "solscanUrl": "https://solscan.io/tx/u7uR1aHSjGakwFNXCRX9v56GReb8j8h4Krz5UpjXutNvrHDh1Lrk6hKs5cnLy1PwtKit78YZFgJBENBaT5WBQ53"
+    },
+    {
+      "ts": "2026-07-24T13:53:27.845Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 3DG7...jfyJ",
+      "amountTokens": "201.772966",
+      "wallet": "3DG7...jfyJ",
+      "solscanUrl": "https://solscan.io/tx/2jrM4Z3ehSErp7DEe8nDq4J8ijiDzLuCGjHieQ9efDNbU9V7hgakaUmvWj8sio5BvgGh7gwApHcFAF2VcBBeSZPU"
+    },
+    {
+      "ts": "2026-07-24T13:53:26.878Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → AbKU...37gu",
+      "amountTokens": "201.772966",
+      "wallet": "AbKU...37gu",
+      "solscanUrl": "https://solscan.io/tx/2rDFkPNJPDVy9L7vSg7Sk7SieaWNy471ViCwD4GTZRc5q7qNrpK9r3cNi5qgF97t3jcNNPR9D7zXG6UEJziaaf5n"
+    },
+    {
+      "ts": "2026-07-24T13:53:25.840Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 28bB...bGKE",
+      "amountTokens": "201.772966",
+      "wallet": "28bB...bGKE",
+      "solscanUrl": "https://solscan.io/tx/299ipHwTCNYJExihuBzdM9ZUoqgtjE84YyzV5eGySxX2MsXVALUsZf7nKwbonC7cnX9UAtnbQ2YJmTvQTeHqbExf"
+    },
+    {
+      "ts": "2026-07-24T13:53:24.588Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 81aS...aJkG",
+      "amountTokens": "201.772966",
+      "wallet": "81aS...aJkG",
+      "solscanUrl": "https://solscan.io/tx/3Dmxukk3D12fEv1uGRYEym4FcBddbMAfw7rdGTzFuki36AybfMNNAmBWcUJuLXCVP2PEK1tqUgoGsJEEauPqkD2e"
+    },
+    {
+      "ts": "2026-07-24T13:53:22.760Z",
+      "kind": "daily",
+      "label": "201.772966 pigeon → 9H15...NKGV",
+      "amountTokens": "201.772966",
+      "wallet": "9H15...NKGV",
+      "solscanUrl": "https://solscan.io/tx/2rTz52fhJdhxE4eLXbchC7yBxSr6xF4DDVgLpT7WphxV6FS3koVpbmVGcfb5kqSD1ij1A4eHgob7oBtzJHizSz7K"
+    },
     {
       "ts": "2026-07-24T13:51:43.802Z",
       "kind": "daily",
@@ -257,70 +321,6 @@
       "amountTokens": "201.772966",
       "wallet": "4XiF...b9gE",
       "solscanUrl": "https://solscan.io/tx/3Cn3oj1nQvNq9HT3qtij1kHkGunVJAW2W6SVGDPt3PyyNTT4KAezeVoYiYrLayGKUfjFub6LCkYV9xVjxANiP44A"
-    },
-    {
-      "ts": "2026-07-24T13:50:14.713Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 5iug...jWpr",
-      "amountTokens": "201.772966",
-      "wallet": "5iug...jWpr",
-      "solscanUrl": "https://solscan.io/tx/3q2txLpXYNsdhbJqrUiDqrTMEQCoNHZqSifHNukerir9qNnyKTw9ziepzLuHb3zxZNLcRjEFae42T9azxLVmaHYU"
-    },
-    {
-      "ts": "2026-07-24T13:50:13.850Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → GkBu...fjQC",
-      "amountTokens": "201.772966",
-      "wallet": "GkBu...fjQC",
-      "solscanUrl": "https://solscan.io/tx/25uYjZpm5bP7ZgLLLL3UAB3sLHZJiAZNs5Bxx7CJu2A8mmQurSyG1KMyGLUR6PZop47airQg36UBd89QiFpa9zi9"
-    },
-    {
-      "ts": "2026-07-24T13:50:12.974Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 4M1v...Mdip",
-      "amountTokens": "201.772966",
-      "wallet": "4M1v...Mdip",
-      "solscanUrl": "https://solscan.io/tx/62ARBSLDmcUmRnzG7WMB7n6pPmGyVYGCk6dzx2dHDnmKYsBF1FC56iVvZ91Zerzc2wvwGB31KyPcgum5EG5KgD2Y"
-    },
-    {
-      "ts": "2026-07-24T13:50:11.743Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 4abn...w6Sd",
-      "amountTokens": "201.772966",
-      "wallet": "4abn...w6Sd",
-      "solscanUrl": "https://solscan.io/tx/9NcJUHaLM7wYMkFiEvpJJYgZfhS5QfVv6A2CsN37UYMpGRKP9tXyrg8oKGqcVkqBCAP2i8dHYyuvubc6hEE3QvG"
-    },
-    {
-      "ts": "2026-07-24T13:50:10.898Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 9z7J...QMcx",
-      "amountTokens": "201.772966",
-      "wallet": "9z7J...QMcx",
-      "solscanUrl": "https://solscan.io/tx/3rHj2c1aPg7QzcPkssAmgRao9aPq6ZMkCoWZqz3vTA9W99jgoTXaR3n4m4jugVM4qm9AAoJWiWDAy152saiMMPfU"
-    },
-    {
-      "ts": "2026-07-24T13:50:10.181Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 3X3U...cw2t",
-      "amountTokens": "201.772966",
-      "wallet": "3X3U...cw2t",
-      "solscanUrl": "https://solscan.io/tx/2J9xXNrU33TBD6q6jR8GhbcHYnjoCuH2RvbULDGwo29YmBhPhSt2po2PCgUFyvsNQ5AWc4EFHNaTK3duJXGSLPPF"
-    },
-    {
-      "ts": "2026-07-24T13:50:09.493Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → 9o4Z...cdJH",
-      "amountTokens": "201.772966",
-      "wallet": "9o4Z...cdJH",
-      "solscanUrl": "https://solscan.io/tx/4fuLFEAF1LcmPURNi6qCkttURmaEN75F4BcWh5SivGsBMgxhfAaTkHr7Zga878Vm2wkfdKDuuc2XTS6Kzzm94Gth"
-    },
-    {
-      "ts": "2026-07-24T13:50:08.574Z",
-      "kind": "daily",
-      "label": "201.772966 pigeon → D8EW...4hjm",
-      "amountTokens": "201.772966",
-      "wallet": "D8EW...4hjm",
-      "solscanUrl": "https://solscan.io/tx/4UEgvabnhR6DQRC64YZPbKz8DeaqGiUT7WZVjicVRSm2P17b3bB9PMV1nGotpHZApRgW2ixqRchQwizcwEXoj7k9"
     }
   ],
   "foreignTokens": [
@@ -371,9 +371,9 @@
     }
   ],
   "holderCount": 1008,
-  "solBalance": 2.52507847,
-  "pigeonBalanceTokens": "120158843.933014",
-  "allTimeDistributedTokens": "13848181.395427",
+  "solBalance": 2.525035246,
+  "pigeonBalanceTokens": "120157431.522252",
+  "allTimeDistributedTokens": "13849795.579155",
   "curveHeadroomTokens": "0",
   "next941": "2026-07-25T13:41:00.000Z"
 }
